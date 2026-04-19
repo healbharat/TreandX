@@ -14,8 +14,10 @@ export default function HomePage() {
   const router = useRouter();
 
   const [posts, setPosts] = useState<any[]>([]);
+  const [recommended, setRecommended] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadingRecommended, setLoadingRecommended] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
 
@@ -42,9 +44,22 @@ export default function HomePage() {
     }
   };
 
+  const fetchRecommended = async () => {
+    try {
+      setLoadingRecommended(true);
+      const { data } = await axios.get('http://localhost:3001/ai/recommendations');
+      setRecommended(data);
+    } catch (err) {
+      console.error('Failed to fetch recommendations', err);
+    } finally {
+      setLoadingRecommended(false);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchPosts(1);
+      fetchRecommended();
     }
   }, [user]);
 
@@ -82,6 +97,48 @@ export default function HomePage() {
           <img src={user.profileImage} alt="Me" className="w-full h-full object-cover" />
         </div>
       </header>
+
+      {/* Recommended Section */}
+      <AnimatePresence>
+        {recommended.length > 0 && (
+          <motion.section 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mb-8"
+          >
+            <div className="px-4 flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <h2 className="text-sm font-black tracking-widest uppercase opacity-80">Recommended for you</h2>
+              </div>
+              <span className="text-[8px] font-bold px-2 py-0.5 rounded-full border border-primary/20 text-primary">AI CUSTOM</span>
+            </div>
+            
+            <div className="flex overflow-x-auto space-x-4 px-4 pb-4 no-scrollbar scroll-smooth">
+              {recommended.map((post) => (
+                <div key={post._id} className="min-w-[280px] max-w-[280px]">
+                  <div className="glass rounded-2xl p-4 h-full border border-primary/10 hover:border-primary/30 transition-all active:scale-[0.98]">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <img src={post.userId.profileImage} alt="" className="w-6 h-6 rounded-full" />
+                      <span className="text-[10px] font-bold truncate">@{post.userId.username}</span>
+                    </div>
+                    <p className="text-xs line-clamp-3 font-medium opacity-90 mb-3">{post.content}</p>
+                    {post.imageUrl && (
+                      <div className="aspect-video rounded-xl overflow-hidden mb-3">
+                        <img src={post.imageUrl} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-[8px] font-black uppercase text-primary/60">{post.category}</span>
+                      <button className="text-[10px] font-bold text-primary">Read full</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       {/* Feed */}
       <div className="space-y-6">

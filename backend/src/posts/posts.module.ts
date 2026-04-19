@@ -22,7 +22,8 @@ import { NotificationsModule } from '../notifications/notifications.module';
       { name: Follow.name, schema: FollowSchema },
     ]),
   ],
-  providers: [PostsService, RedisService, UploadService],
+  providers: [PostsService, UploadService],
   controllers: [PostsController],
+  exports: [MongooseModule],
 })
 export class PostsModule {}

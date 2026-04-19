@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
 import { useSocket } from '@/context/SocketContext';
@@ -16,6 +16,8 @@ interface PostProps {
     createdAt: string;
     isLiked: boolean;
     isSaved: boolean;
+    headline?: string;
+    summary?: string;
     userId: {
       _id: string;
       name: string;
@@ -28,7 +30,10 @@ interface PostProps {
 export default function PostCard({ post: initialPost }: PostProps) {
   const [post, setPost] = useState(initialPost);
   const [isLiking, setIsLiking] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [summary, setSummary] = useState(post.summary || '');
+  const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -87,6 +92,40 @@ export default function PostCard({ post: initialPost }: PostProps) {
     }
   };
 
+  const handleFetchSummary = async () => {
+    if (summary) {
+      setShowSummary(!showSummary);
+      return;
+    }
+
+    try {
+      setIsLoadingSummary(true);
+      const { data } = await axios.post('http://localhost:3001/ai/summarize', { content: post.content });
+      setSummary(data.summary);
+      setShowSummary(true);
+    } catch (err) {
+      console.error('Failed to fetch summary', err);
+    } finally {
+      setIsLoadingSummary(false);
+    }
+  };
+
+  const handleReport = async () => {
+    const reason = window.prompt('Why are you reporting this post? (e.g. Hate speech, Spreading misinformation, Abusive)');
+    if (!reason) return;
+
+    try {
+      await axios.post('http://localhost:3001/report', {
+        postId: post._id,
+        reason,
+      });
+      alert('Post reported successfully. Our moderators will review it.');
+    } catch (err) {
+      console.error('Failed to report post', err);
+      alert('Failed to report post.');
+    }
+  };
+
   return (
     <>
       <motion.div
@@ -110,14 +149,60 @@ export default function PostCard({ post: initialPost }: PostProps) {
               </p>
             </div>
           </div>
-          <button className="text-muted-foreground hover:text-white transition-colors">
-            <MoreHorizontal size={20} />
-          </button>
+          <div className="flex items-center space-x-1">
+            <button 
+              onClick={handleReport}
+              className="p-2 text-muted-foreground hover:text-red-500 transition-colors"
+              title="Report Post"
+            >
+              <AlertTriangle size={18} />
+            </button>
+            <button className="p-2 text-muted-foreground hover:text-white transition-colors">
+              <MoreHorizontal size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Content */}
         <div className="px-4 pb-3">
+          {post.headline && (
+            <h3 className="text-xl font-black mb-2 leading-tight tracking-tight bg-gradient-to-r from-primary to-rose-400 bg-clip-text text-transparent">
+              {post.headline}
+            </h3>
+          )}
           <p className="text-[15px] leading-relaxed opacity-90">{post.content}</p>
+          
+          <AnimatePresence>
+            {showSummary && summary && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="mt-4 p-4 rounded-2xl bg-primary/5 border border-primary/10 relative group"
+              >
+                <div className="absolute -top-2 left-4 px-2 bg-background border border-primary/20 rounded-full flex items-center space-x-1">
+                  <span className="text-[8px] font-bold tracking-widest text-primary">AI GENERATED</span>
+                </div>
+                <p className="text-xs italic text-muted-foreground leading-extended font-medium">
+                  {summary}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <button 
+            onClick={handleFetchSummary}
+            className="mt-3 flex items-center space-x-1.5 text-[10px] font-bold text-primary/60 hover:text-primary transition-colors py-1 px-3 rounded-full border border-primary/10 hover:border-primary/30 bg-primary/5"
+          >
+            {isLoadingSummary ? (
+              <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            )}
+            <span>{showSummary ? 'HIDE AI SUMMARY' : 'VIEW AI SUMMARY'}</span>
+          </button>
         </div>
 
         {/* Image */}

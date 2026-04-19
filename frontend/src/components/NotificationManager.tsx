@@ -29,9 +29,9 @@ export default function NotificationManager() {
 
     setupNotifications();
 
-    // 3. Listen for Foreground Messages
     onMessageListener()
       .then((payload: any) => {
+        if (!payload) return;
         console.log('[FCM] Foreground message received:', payload);
         toast.custom((t) => (
           <div

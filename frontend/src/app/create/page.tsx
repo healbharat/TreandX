@@ -15,6 +15,8 @@ export default function CreatePostPage() {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [headline, setHeadline] = useState('');
+  const [isGeneratingHeadline, setIsGeneratingHeadline] = useState(false);
   const [error, setError] = useState('');
   
   const { user } = useAuth();
@@ -36,6 +38,23 @@ export default function CreatePostPage() {
   const removeImage = () => {
     setImage(null);
     setPreview(null);
+  };
+
+  const handleGenerateHeadline = async () => {
+    if (!content.trim()) return;
+    
+    setIsGeneratingHeadline(true);
+    setError('');
+    
+    try {
+      const { data } = await axios.post('http://localhost:3001/ai/headline', { content });
+      setHeadline(data.headline);
+    } catch (err: any) {
+      console.error('Failed to generate headline', err);
+      setError('AI service unavailable. Please write a headline manually.');
+    } finally {
+      setIsGeneratingHeadline(false);
+    }
   };
 
   const handlePost = async () => {
@@ -62,6 +81,7 @@ export default function CreatePostPage() {
         content,
         category,
         imageUrl,
+        headline,
       });
 
       router.push('/home');
@@ -113,16 +133,49 @@ export default function CreatePostPage() {
         </div>
 
         {/* Content Input */}
-        <div className="relative">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value.slice(0, 280))}
-            placeholder="What's happening in your local area?"
-            className="w-full bg-transparent border-none outline-none text-xl resize-none placeholder:text-muted-foreground/30 h-40"
-            disabled={loading}
-          />
-          <div className="absolute bottom-2 right-2 text-[10px] font-mono text-muted-foreground bg-secondary/50 px-2 py-1 rounded">
-            {content.length}/280
+        <div className="space-y-4">
+          <div className="relative">
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value.slice(0, 1000))}
+              placeholder="What's happening in your local area?"
+              className="w-full bg-transparent border-none outline-none text-xl resize-none placeholder:text-muted-foreground/30 h-40"
+              disabled={loading}
+            />
+            <div className="absolute bottom-2 right-2 text-[10px] font-mono text-muted-foreground bg-secondary/50 px-2 py-1 rounded">
+              {content.length}/1000
+            </div>
+          </div>
+
+          {/* AI Headline Generator */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2 text-muted-foreground">
+                <Type size={16} />
+                <span className="text-xs font-bold uppercase tracking-widest">Headline</span>
+              </div>
+              <button
+                onClick={handleGenerateHeadline}
+                disabled={!content.trim() || isGeneratingHeadline}
+                className="flex items-center space-x-1.5 text-[10px] font-bold text-primary hover:text-primary/80 disabled:opacity-30 transition-all uppercase tracking-tighter"
+              >
+                {isGeneratingHeadline ? (
+                  <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg className="w-3 h-3 fill-primary" viewBox="0 0 24 24">
+                    <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
+                  </svg>
+                )}
+                <span>Generate Smart Headline</span>
+              </button>
+            </div>
+            <input
+              type="text"
+              value={headline}
+              onChange={(e) => setHeadline(e.target.value)}
+              placeholder="Enter a catchy headline or use AI..."
+              className="w-full bg-white/5 border border-border rounded-2xl p-4 text-sm focus:outline-none focus:border-primary transition-all"
+            />
           </div>
         </div>
 

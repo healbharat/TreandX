@@ -20,6 +20,16 @@ export class User extends Document {
 
   @Prop({ default: false })
   isProfileComplete: boolean;
+
+  @Prop({ type: [String], default: [] })
+  interests: string[];
+
+  @Prop({ default: 'user' })
+  role: string;
+
+  @Prop({ default: false })
+  isBlocked: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.index({ name: 'text', username: 'text' });

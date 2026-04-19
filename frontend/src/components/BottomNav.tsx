@@ -1,17 +1,19 @@
 'use client';
 
-import { Home, PlusSquare, Bell, User, Search } from 'lucide-react';
+import { Home, PlusSquare, Bell, User, Search, ShieldCheck } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSocket } from '@/context/SocketContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function BottomNav() {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
   const { socket } = useSocket();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchUnread = async () => {
@@ -34,15 +36,19 @@ export default function BottomNav() {
 
   const navItems = [
     { icon: Home, label: 'Home', href: '/home' },
-    { icon: Search, label: 'Explore', href: '/explore' },
+    { icon: Search, label: 'Explore', href: '/search' },
     { icon: PlusSquare, label: 'Create', href: '/create' },
     { icon: Bell, label: 'Alerts', href: '/notifications', badge: unreadCount },
     { icon: User, label: 'Me', href: '/profile' },
   ];
 
+  if (user?.role === 'admin') {
+    navItems.push({ icon: ShieldCheck, label: 'Admin', href: '/admin' });
+  }
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 pointer-events-none">
-      <div className="glass shadow-2xl shadow-primary/20 rounded-full px-6 py-3 flex items-center space-x-8 pointer-events-auto">
+      <div className="glass shadow-2xl shadow-primary/20 rounded-full px-4 py-3 flex items-center space-x-4 md:space-x-8 pointer-events-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;

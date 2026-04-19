@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { InteractionsModule } from './interactions/interactions.module';
 import { EventsModule } from './events/events.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SearchModule } from './search/search.module';
+import { AIModule } from './ai/ai.module';
+import { AdminModule } from './admin/admin.module';
+import { ReportsModule } from './reports/reports.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -14,6 +19,7 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CommonModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -31,6 +37,10 @@ import { AppController } from './app.controller';
     InteractionsModule,
     EventsModule,
     NotificationsModule,
+    SearchModule,
+    AIModule,
+    AdminModule,
+    ReportsModule,
   ],
   controllers: [AppController],
 })

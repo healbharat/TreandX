@@ -24,7 +24,7 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   @Post('post/create')
   async createPost(
-    @Body() postData: { content: string; category: string; imageUrl?: string },
+    @Body() postData: { content: string; category: string; imageUrl?: string; headline?: string },
     @Request() req,
   ) {
     return this.postsService.createPost(
@@ -32,6 +32,7 @@ export class PostsController {
       postData.content,
       postData.category,
       postData.imageUrl,
+      postData.headline,
     );
   }
 

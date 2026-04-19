@@ -45,7 +45,11 @@ export class AuthService {
       isNewUser = true;
     }
 
-    const payload = { sub: user._id, mobile: user.mobile };
+    if (user.isBlocked) {
+      throw new UnauthorizedException('Your account has been blocked by administrators.');
+    }
+
+    const payload = { sub: user._id, mobile: user.mobile, role: user.role };
     const token = this.jwtService.sign(payload);
 
     return {
@@ -58,6 +62,7 @@ export class AuthService {
         username: user.username,
         profileImage: user.profileImage,
         isProfileComplete: user.isProfileComplete,
+        role: user.role,
       },
     };
   }

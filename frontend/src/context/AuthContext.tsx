@@ -11,6 +11,7 @@ interface User {
   username?: string;
   profileImage?: string;
   isProfileComplete: boolean;
+  role: string;
 }
 
 interface AuthContextType {

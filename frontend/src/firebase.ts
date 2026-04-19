@@ -10,11 +10,13 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const isFirebaseConfigured = !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+
+// Initialize Firebase only if config is present
+const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
 
 // Initialize Firebase Cloud Messaging and get a reference to the service
-const messaging = typeof window !== 'undefined' ? getMessaging(app) : null;
+const messaging = (isFirebaseConfigured && typeof window !== 'undefined') ? getMessaging(app!) : null;
 
 export const requestForToken = async () => {
   if (!messaging) return null;
@@ -37,7 +39,10 @@ export const requestForToken = async () => {
 
 export const onMessageListener = () =>
   new Promise((resolve) => {
-    if (!messaging) return;
+    if (!messaging) {
+      resolve(null);
+      return;
+    }
     onMessage(messaging, (payload) => {
       resolve(payload);
     });

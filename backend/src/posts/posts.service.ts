@@ -36,7 +36,7 @@ export class PostsService {
     }
 
     const posts = await this.postModel
-      .find()
+      .find({ status: 'active' })
       .populate('userId', 'name username profileImage')
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -115,7 +115,7 @@ export class PostsService {
     }
   }
 
-  async createPost(userId: string, content: string, category: string, imageUrl?: string) {
+  async createPost(userId: string, content: string, category: string, imageUrl?: string, headline?: string) {
     const abusiveWords = this.configService.get('ABUSIVE_WORDS', '').split(',');
     let isFlagged = false;
 
@@ -134,6 +134,7 @@ export class PostsService {
       category,
       imageUrl,
       isFlagged,
+      headline,
     });
 
     // Clear feed cache so new post appears

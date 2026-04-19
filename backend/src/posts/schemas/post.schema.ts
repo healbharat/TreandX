@@ -20,6 +20,16 @@ export class Post extends Document {
 
   @Prop({ default: false })
   isFlagged: boolean;
+
+  @Prop()
+  summary?: string;
+
+  @Prop()
+  headline?: string;
+
+  @Prop({ default: 'active' })
+  status: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
+PostSchema.index({ content: 'text', category: 'text' });
