@@ -87,12 +87,26 @@ Check out a few resources that may come in handy when working with NestJS:
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+# 🚀 TreandX Backend
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+TreandX is a real-time social news platform backend built with NestJS.
 
-## License
+## 🔧 Tech Stack
+- NestJS
+- MongoDB
+- Redis
+- Firebase (Push Notifications)
+- Socket.io (Real-time)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## ⚡ Features
+- Authentication (OTP + JWT)
+- Real-time Notifications
+- News Feed System
+- Social Interaction (Like, Comment, Follow)
+- Push Notifications (FCM)
+
+## 🧠 Author
+- Om Sonawane
+
+## 📌 Status
+Production-ready backend for TreandX 🚀
