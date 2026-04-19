@@ -7,6 +7,7 @@ import { PostsModule } from './posts/posts.module';
 import { InteractionsModule } from './interactions/interactions.module';
 import { EventsModule } from './events/events.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -31,5 +32,6 @@ import { NotificationsModule } from './notifications/notifications.module';
     EventsModule,
     NotificationsModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
