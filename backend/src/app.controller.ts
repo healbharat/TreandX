@@ -5,6 +5,7 @@ export class AppController {
   @Get()
   getRoot() {
     return {
+      status: "OK",
       message: "TreandX Backend Live 🚀"
     };
   }
