@@ -29,6 +29,9 @@ export class Post extends Document {
 
   @Prop({ default: 'active' })
   status: string;
+
+  @Prop({ default: 0 })
+  sharesCount: number;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

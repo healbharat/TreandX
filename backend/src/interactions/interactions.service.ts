@@ -68,10 +68,19 @@ export class InteractionsService {
 
     if (existing) {
       await this.followModel.deleteOne({ _id: existing._id });
+      
+      // Update counts
+      await this.postModel.db.model('User').findByIdAndUpdate(fId, { $inc: { followingCount: -1 } });
+      await this.postModel.db.model('User').findByIdAndUpdate(tId, { $inc: { followersCount: -1 } });
+
       return { following: false };
     } else {
       await this.followModel.create({ followerId: fId, followingId: tId });
       
+      // Update counts
+      await this.postModel.db.model('User').findByIdAndUpdate(fId, { $inc: { followingCount: 1 } });
+      await this.postModel.db.model('User').findByIdAndUpdate(tId, { $inc: { followersCount: 1 } });
+
       this.eventsGateway.emitNewFollow({
         followerId,
         followingId,
@@ -88,6 +97,78 @@ export class InteractionsService {
 
       return { following: true };
     }
+  }
+
+  async toggleLike(postId: string, userId: string) {
+    const pId = new Types.ObjectId(postId);
+    const uId = new Types.ObjectId(userId);
+
+    const existingLike = await this.likeModel.findOne({ userId: uId, postId: pId });
+
+    if (existingLike) {
+      await this.likeModel.deleteOne({ _id: existingLike._id });
+      const post = await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: -1 } }, { new: true });
+      
+      this.eventsGateway.emitNewLike({
+        postId,
+        likesCount: post?.likesCount || 0,
+      });
+
+      return { liked: false };
+    } else {
+      await this.likeModel.create({ userId: uId, postId: pId });
+      const post = await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: 1 } }, { new: true });
+      
+      this.eventsGateway.emitNewLike({
+        postId,
+        likesCount: post?.likesCount || 0,
+      });
+
+      // Send Notification to Post Owner
+      if (post) {
+        const liker = await this.commentModel.db.model('User').findById(userId);
+        await this.notificationsService.create({
+          userId: post.userId.toString(),
+          senderId: userId,
+          type: NotificationType.LIKE,
+          message: `${liker?.name || 'Someone'} liked your post`,
+          postId,
+        });
+      }
+
+      return { liked: true };
+    }
+  }
+
+  async toggleSave(postId: string, userId: string) {
+    const pId = new Types.ObjectId(postId);
+    const uId = new Types.ObjectId(userId);
+
+    const existingSave = await this.commentModel.db.model('Save').findOne({ userId: uId, postId: pId });
+
+    if (existingSave) {
+      await this.commentModel.db.model('Save').deleteOne({ _id: existingSave._id });
+      return { saved: false };
+    } else {
+      await this.commentModel.db.model('Save').create({ userId: uId, postId: pId });
+      return { saved: true };
+    }
+  }
+
+  async sharePost(postId: string) {
+    const post = await this.postModel.findByIdAndUpdate(
+      postId,
+      { $inc: { sharesCount: 1 } },
+      { new: true }
+    );
+    if (!post) throw new NotFoundException('Post not found');
+
+    this.eventsGateway.emitPostShared({
+      postId,
+      sharesCount: post.sharesCount,
+    });
+
+    return { sharesCount: post.sharesCount };
   }
 
   async getFollowStatus(followerId: string, followingId: string) {

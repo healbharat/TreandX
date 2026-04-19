@@ -22,4 +22,16 @@ export class UploadService {
       upload.end(file.buffer);
     });
   }
+
+  async deleteImage(imageUrl: string) {
+    try {
+      // Extract public_id from URL
+      const parts = imageUrl.split('/');
+      const filename = parts[parts.length - 1];
+      const publicId = filename.split('.')[0];
+      await cloudinary.uploader.destroy(publicId);
+    } catch (err) {
+      console.error('Failed to delete image from Cloudinary', err);
+    }
+  }
 }

@@ -28,4 +28,21 @@ export class InteractionsController {
   async getFollowStatus(@Query('targetUserId') targetUserId: string, @Request() req) {
     return this.interactionsService.getFollowStatus(req.user.userId, targetUserId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('like/toggle')
+  async toggleLike(@Body('postId') postId: string, @Request() req) {
+    return this.interactionsService.toggleLike(postId, req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('save/toggle')
+  async toggleSave(@Body('postId') postId: string, @Request() req) {
+    return this.interactionsService.toggleSave(postId, req.user.userId);
+  }
+
+  @Post('share')
+  async sharePost(@Body('postId') postId: string) {
+    return this.interactionsService.sharePost(postId);
+  }
 }

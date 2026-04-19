@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, UseGuards, Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards, Request, UseInterceptors, UploadedFile, Param, Delete } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -45,14 +45,14 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('post/like')
-  async toggleLike(@Body('postId') postId: string, @Request() req) {
-    return this.postsService.toggleLike(postId, req.user.userId);
+  @Get('user/:id/posts')
+  async getUserPosts(@Param('id') userId: string) {
+    return this.postsService.getUserPosts(userId);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('post/save')
-  async toggleSave(@Body('postId') postId: string, @Request() req) {
-    return this.postsService.toggleSave(postId, req.user.userId);
+  @Delete('post/:id')
+  async deletePost(@Param('id') postId: string, @Request() req) {
+    return this.postsService.deletePost(postId, req.user.userId);
   }
 }

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from './common/common.module';
@@ -15,6 +16,7 @@ import { ReportsModule } from './reports/reports.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AdsModule } from './ads/ads.module';
 import { EarningsModule } from './earnings/earnings.module';
+import { StoriesModule } from './stories/stories.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -22,6 +24,7 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     CommonModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -47,6 +50,7 @@ import { AppController } from './app.controller';
     PaymentsModule,
     AdsModule,
     EarningsModule,
+    StoriesModule,
   ],
   controllers: [AppController],
 })

@@ -7,6 +7,7 @@ import axios from 'axios';
 import PostCard from '@/components/PostCard';
 import SkeletonCard from '@/components/SkeletonCard';
 import AdCard from '@/components/AdCard';
+import StoryBar from '@/components/StoryBar';
 import BottomNav from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -109,6 +110,9 @@ export default function HomePage() {
           <img src={user.profileImage} alt="Me" className="w-full h-full object-cover" />
         </div>
       </header>
+
+      {/* Stories */}
+      <StoryBar />
 
       {/* Recommended Section */}
       <AnimatePresence>

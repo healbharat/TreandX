@@ -15,6 +15,16 @@ export class UsersService {
     return user;
   }
 
+  async findByUsername(username: string) {
+    const user = await this.userModel.findOne({ username }).exec();
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  async updateProfile(id: string, data: { name?: string; bio?: string; profileImage?: string }) {
+    return this.userModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+  }
+
   async setupProfile(id: string, profileData: { name: string; username: string; profileImage?: string }) {
     const existingUser = await this.userModel.findOne({ username: profileData.username, _id: { $ne: id } });
     if (existingUser) {

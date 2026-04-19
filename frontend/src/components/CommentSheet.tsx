@@ -45,9 +45,9 @@ export default function CommentSheet({ postId, onClose }: CommentSheetProps) {
       }
     };
 
-    socket.on('new-comment', handleNewComment);
+    socket.on('newComment', handleNewComment);
     return () => {
-      socket.off('new-comment', handleNewComment);
+      socket.off('newComment', handleNewComment);
     };
   }, [socket, postId]);
 

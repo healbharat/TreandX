@@ -22,5 +22,6 @@ import { NotificationsModule } from '../notifications/notifications.module';
   ],
   providers: [InteractionsService],
   controllers: [InteractionsController],
+  exports: [MongooseModule],
 })
 export class InteractionsModule {}

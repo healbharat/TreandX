@@ -11,6 +11,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../notifications/schemas/notification.schema';
 import { Follow } from '../interactions/schemas/follow.schema';
 import { EarningsService } from '../earnings/earnings.service';
+import { UploadService } from './upload.service';
 
 @Injectable()
 export class PostsService {
@@ -24,6 +25,7 @@ export class PostsService {
     private readonly eventsGateway: EventsGateway,
     private readonly notificationsService: NotificationsService,
     private readonly earningsService: EarningsService,
+    private readonly uploadService: UploadService,
   ) {}
 
   async getFeed(page: number, limit: number, userId?: string) {
@@ -66,60 +68,32 @@ export class PostsService {
     return postsWithMeta;
   }
 
-  async toggleLike(postId: string, userId: string) {
-    const pId = new Types.ObjectId(postId);
-    const uId = new Types.ObjectId(userId);
 
-    const existingLike = await this.likeModel.findOne({ userId: uId, postId: pId });
 
-    if (existingLike) {
-      await this.likeModel.deleteOne({ _id: existingLike._id });
-      await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: -1 } });
-      return { liked: false };
-    } else {
-      await this.likeModel.create({ userId: uId, postId: pId });
-      await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: 1 } });
-      
-      // Award earnings to post owner
-      const post = await this.postModel.findById(postId);
-      if (post) {
-        await this.earningsService.addEngagementEarnings(post.userId.toString(), 0.5); // 0.5 units per like
-      }
-      
-      this.eventsGateway.emitNewLike({
-        postId,
-        userId,
-      });
-
-      // Send Notification to Post Owner
-      const liker = await this.postModel.db.model('User').findById(userId);
-      if (post && liker) {
-        await this.notificationsService.create({
-          userId: post.userId.toString(),
-          senderId: userId,
-          type: NotificationType.LIKE,
-          message: `${liker.name} liked your post`,
-          postId,
-        });
-      }
-
-      return { liked: true };
-    }
+  async getUserPosts(userId: string) {
+    return this.postModel
+      .find({ userId: new Types.ObjectId(userId) })
+      .populate('userId', 'name username profileImage isPremium')
+      .sort({ createdAt: -1 })
+      .exec();
   }
 
-  async toggleSave(postId: string, userId: string) {
-    const pId = new Types.ObjectId(postId);
-    const uId = new Types.ObjectId(userId);
+  async deletePost(postId: string, userId: string) {
+    const post = await this.postModel.findOne({
+      _id: new Types.ObjectId(postId),
+      userId: new Types.ObjectId(userId),
+    });
 
-    const existingSave = await this.saveModel.findOne({ userId: uId, postId: pId });
+    if (!post) throw new Error('Post not found or unauthorized');
 
-    if (existingSave) {
-      await this.saveModel.deleteOne({ _id: existingSave._id });
-      return { saved: false };
-    } else {
-      await this.saveModel.create({ userId: uId, postId: pId });
-      return { saved: true };
+    if (post.imageUrl) {
+      await this.uploadService.deleteImage(post.imageUrl);
     }
+
+    await this.postModel.deleteOne({ _id: post._id });
+    await this.redisService.del('feed:first_page'); // Invalidate cache
+
+    return { success: true };
   }
 
   async createPost(userId: string, content: string, category: string, imageUrl?: string, headline?: string) {

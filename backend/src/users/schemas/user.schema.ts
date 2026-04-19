@@ -34,7 +34,13 @@ export class User extends Document {
   isPremium: boolean;
 
   @Prop()
-  premiumExpiry: Date;
+  bio: string;
+
+  @Prop({ default: 0 })
+  followersCount: number;
+
+  @Prop({ default: 0 })
+  followingCount: number;
 
   @Prop({ default: 0 })
   earnings: number;

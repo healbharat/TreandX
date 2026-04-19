@@ -13,6 +13,7 @@ interface PostProps {
     content: string;
     imageUrl?: string;
     likesCount: number;
+    sharesCount?: number;
     createdAt: string;
     isLiked: boolean;
     isSaved: boolean;
@@ -40,18 +41,29 @@ export default function PostCard({ post: initialPost }: PostProps) {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewLike = (payload: any) => {
+    const handlePostLiked = (payload: any) => {
       if (payload.postId === post._id) {
         setPost((prev) => ({
           ...prev,
-          likesCount: prev.likesCount + 1,
+          likesCount: payload.likesCount,
         }));
       }
     };
 
-    socket.on('new-like', handleNewLike);
+    const handlePostShared = (payload: any) => {
+      if (payload.postId === post._id) {
+        setPost((prev) => ({
+          ...prev,
+          sharesCount: payload.sharesCount,
+        }));
+      }
+    };
+
+    socket.on('postLiked', handlePostLiked);
+    socket.on('postShared', handlePostShared);
     return () => {
-      socket.off('new-like', handleNewLike);
+      socket.off('postLiked', handlePostLiked);
+      socket.off('postShared', handlePostShared);
     };
   }, [socket, post._id]);
 
@@ -70,7 +82,7 @@ export default function PostCard({ post: initialPost }: PostProps) {
 
     try {
       setIsLiking(true);
-      await axios.post('http://localhost:3001/post/like', { postId: post._id });
+      await axios.post('http://localhost:3001/interactions/like/toggle', { postId: post._id });
     } catch (err) {
       setPost({
         ...post,
@@ -87,9 +99,20 @@ export default function PostCard({ post: initialPost }: PostProps) {
     setPost({ ...post, isSaved: !prevSaved });
 
     try {
-      await axios.post('http://localhost:3001/post/save', { postId: post._id });
+      await axios.post('http://localhost:3001/interactions/save/toggle', { postId: post._id });
     } catch (err) {
       setPost({ ...post, isSaved: prevSaved });
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      await axios.post('http://localhost:3001/interactions/share', { postId: post._id });
+      const shareUrl = `${window.location.origin}/post/${post._id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Link copied to clipboard!');
+    } catch (err) {
+      console.error('Share failed', err);
     }
   };
 
@@ -248,8 +271,12 @@ export default function PostCard({ post: initialPost }: PostProps) {
               <span className="text-sm font-bold">Comments</span>
             </button>
             
-            <button className="text-muted-foreground hover:text-white transition-colors">
+            <button 
+              onClick={handleShare}
+              className="flex items-center space-x-2 text-muted-foreground hover:text-white transition-colors active:scale-95"
+            >
               <Share2 size={22} />
+              {post.sharesCount ? <span className="text-[10px] font-black">{post.sharesCount}</span> : null}
             </button>
           </div>
 

@@ -31,14 +31,18 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   emitNewLike(data: any) {
-    this.server.emit('new-like', data);
+    this.server.emit('postLiked', data);
   }
 
   emitNewComment(data: any) {
-    this.server.emit('new-comment', data);
+    this.server.emit('newComment', data);
   }
 
   emitNewFollow(data: any) {
-    this.server.emit('new-follow', data);
+    this.server.emit('newFollow', data);
+  }
+
+  emitPostShared(data: any) {
+    this.server.emit('postShared', data);
   }
 }
