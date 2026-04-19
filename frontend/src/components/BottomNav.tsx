@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, PlusSquare, Bell, User, Search, ShieldCheck } from 'lucide-react';
+import { Home, PlusSquare, Bell, User, Search, ShieldCheck, Crown, Coins } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -36,9 +36,10 @@ export default function BottomNav() {
 
   const navItems = [
     { icon: Home, label: 'Home', href: '/home' },
-    { icon: Search, label: 'Explore', href: '/search' },
+    { icon: Crown, label: 'Premium', href: '/premium' },
     { icon: PlusSquare, label: 'Create', href: '/create' },
     { icon: Bell, label: 'Alerts', href: '/notifications', badge: unreadCount },
+    { icon: Coins, label: 'Earn', href: '/earnings' },
     { icon: User, label: 'Me', href: '/profile' },
   ];
 
@@ -48,7 +49,7 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-6 pointer-events-none">
-      <div className="glass shadow-2xl shadow-primary/20 rounded-full px-4 py-3 flex items-center space-x-4 md:space-x-8 pointer-events-auto">
+      <div className="glass shadow-2xl shadow-primary/20 rounded-full px-4 py-3 flex items-center space-x-4 md:space-x-8 pointer-events-auto overflow-x-auto no-scrollbar">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;

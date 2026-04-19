@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import PostCard from '@/components/PostCard';
 import SkeletonCard from '@/components/SkeletonCard';
+import AdCard from '@/components/AdCard';
 import BottomNav from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,6 +16,7 @@ export default function HomePage() {
 
   const [posts, setPosts] = useState<any[]>([]);
   const [recommended, setRecommended] = useState<any[]>([]);
+  const [ads, setAds] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [loadingRecommended, setLoadingRecommended] = useState(false);
@@ -56,10 +58,20 @@ export default function HomePage() {
     }
   };
 
+  const fetchAds = async () => {
+    try {
+      const { data } = await axios.get('http://localhost:3001/ads');
+      setAds(data);
+    } catch (err) {
+      console.error('Failed to fetch ads', err);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchPosts(1);
       fetchRecommended();
+      if (!user.isPremium) fetchAds();
     }
   }, [user]);
 
@@ -144,15 +156,21 @@ export default function HomePage() {
       <div className="space-y-6">
         <AnimatePresence mode="popLayout">
           {posts.map((post, index) => {
-            if (posts.length === index + 1) {
-              return (
-                <div ref={lastPostElementRef} key={post._id}>
+            const showAd = !user.isPremium && ads.length > 0 && (index + 1) % 5 === 0;
+            const adIndex = Math.floor(index / 5) % ads.length;
+
+            return (
+              <div key={post._id}>
+                {showAd && ads[adIndex] && <AdCard ad={ads[adIndex]} />}
+                {posts.length === index + 1 ? (
+                  <div ref={lastPostElementRef}>
+                    <PostCard post={post} />
+                  </div>
+                ) : (
                   <PostCard post={post} />
-                </div>
-              );
-            } else {
-              return <PostCard key={post._id} post={post} />;
-            }
+                )}
+              </div>
+            );
           })}
         </AnimatePresence>
 

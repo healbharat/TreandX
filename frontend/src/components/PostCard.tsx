@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, AlertTriangle } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, AlertTriangle, Crown } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import axios from 'axios';
 import { useSocket } from '@/context/SocketContext';
@@ -23,6 +23,7 @@ interface PostProps {
       name: string;
       username: string;
       profileImage: string;
+      isPremium?: boolean;
     };
   };
 }
@@ -140,8 +141,11 @@ export default function PostCard({ post: initialPost }: PostProps) {
               <img src={post.userId.profileImage} alt={post.userId.name} className="w-full h-full rounded-full object-cover" />
             </div>
             <div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1">
                 <h4 className="font-bold text-sm tracking-tight">{post.userId.name}</h4>
+                {post.userId.isPremium && (
+                  <Crown size={12} className="text-primary fill-primary" />
+                )}
                 <FollowButton userId={post.userId._id} />
               </div>
               <p className="text-muted-foreground text-[10px]">

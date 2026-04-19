@@ -10,6 +10,7 @@ import { EventsGateway } from '../events/events.gateway';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../notifications/schemas/notification.schema';
 import { Follow } from '../interactions/schemas/follow.schema';
+import { EarningsService } from '../earnings/earnings.service';
 
 @Injectable()
 export class PostsService {
@@ -22,6 +23,7 @@ export class PostsService {
     private readonly configService: ConfigService,
     private readonly eventsGateway: EventsGateway,
     private readonly notificationsService: NotificationsService,
+    private readonly earningsService: EarningsService,
   ) {}
 
   async getFeed(page: number, limit: number, userId?: string) {
@@ -37,7 +39,7 @@ export class PostsService {
 
     const posts = await this.postModel
       .find({ status: 'active' })
-      .populate('userId', 'name username profileImage')
+      .populate('userId', 'name username profileImage isPremium')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -78,13 +80,18 @@ export class PostsService {
       await this.likeModel.create({ userId: uId, postId: pId });
       await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: 1 } });
       
+      // Award earnings to post owner
+      const post = await this.postModel.findById(postId);
+      if (post) {
+        await this.earningsService.addEngagementEarnings(post.userId.toString(), 0.5); // 0.5 units per like
+      }
+      
       this.eventsGateway.emitNewLike({
         postId,
         userId,
       });
 
       // Send Notification to Post Owner
-      const post = await this.postModel.findById(postId);
       const liker = await this.postModel.db.model('User').findById(userId);
       if (post && liker) {
         await this.notificationsService.create({
@@ -136,6 +143,9 @@ export class PostsService {
       isFlagged,
       headline,
     });
+
+    // Award earnings for creating a post
+    await this.earningsService.addEngagementEarnings(userId, 5); // 5 units per post
 
     // Clear feed cache so new post appears
     await this.redisService.del('feed:first_page');

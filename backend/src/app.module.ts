@@ -12,6 +12,9 @@ import { SearchModule } from './search/search.module';
 import { AIModule } from './ai/ai.module';
 import { AdminModule } from './admin/admin.module';
 import { ReportsModule } from './reports/reports.module';
+import { PaymentsModule } from './payments/payments.module';
+import { AdsModule } from './ads/ads.module';
+import { EarningsModule } from './earnings/earnings.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -41,6 +44,9 @@ import { AppController } from './app.controller';
     AIModule,
     AdminModule,
     ReportsModule,
+    PaymentsModule,
+    AdsModule,
+    EarningsModule,
   ],
   controllers: [AppController],
 })

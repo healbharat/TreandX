@@ -10,11 +10,13 @@ import { UploadService } from './upload.service';
 import { EventsModule } from '../events/events.module';
 import { Follow, FollowSchema } from '../interactions/schemas/follow.schema';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { EarningsModule } from '../earnings/earnings.module';
 
 @Module({
   imports: [
     EventsModule,
     NotificationsModule,
+    EarningsModule,
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema },
       { name: Like.name, schema: LikeSchema },

@@ -29,6 +29,15 @@ export class User extends Document {
 
   @Prop({ default: false })
   isBlocked: boolean;
+
+  @Prop({ default: false })
+  isPremium: boolean;
+
+  @Prop()
+  premiumExpiry: Date;
+
+  @Prop({ default: 0 })
+  earnings: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
