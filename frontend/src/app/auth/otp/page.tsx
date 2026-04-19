@@ -112,7 +112,7 @@ export default function OtpPage() {
         {otp.map((digit, i) => (
           <input
             key={i}
-            ref={(el) => (inputs.current[i] = el)}
+            ref={(el) => { inputs.current[i] = el; }}
             type="number"
             value={digit}
             onChange={(e) => handleChange(i, e.target.value)}
