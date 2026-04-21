@@ -16,13 +16,25 @@ export class PaymentsService {
     @InjectModel(Transaction.name) private transactionModel: Model<Transaction>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {
-    this.razorpay = new Razorpay({
-      key_id: this.configService.get('RAZORPAY_KEY_ID'),
-      key_secret: this.configService.get('RAZORPAY_KEY_SECRET'),
-    });
+    const keyId = this.configService.get('RAZORPAY_KEY_ID');
+    const keySecret = this.configService.get('RAZORPAY_KEY_SECRET');
+
+    if (keyId && keySecret) {
+      this.razorpay = new Razorpay({
+        key_id: keyId,
+        key_secret: keySecret,
+      });
+      console.log('[PAYMENT] Razorpay initialized successfully');
+    } else {
+      console.warn('[PAYMENT] Razorpay keys missing. Payment features will be disabled.');
+      this.razorpay = null;
+    }
   }
 
   async createOrder(userId: string, amount: number) {
+    if (!this.razorpay) {
+      throw new BadRequestException('Payment system is not configured yet');
+    }
     const options = {
       amount: amount * 100, // in paise
       currency: 'INR',
@@ -46,6 +58,9 @@ export class PaymentsService {
   }
 
   async verifyPayment(userId: string, data: { orderId: string; paymentId: string; signature: string }) {
+    if (!this.razorpay) {
+      throw new BadRequestException('Payment system is not configured yet');
+    }
     const { orderId, paymentId, signature } = data;
     const secret = this.configService.get('RAZORPAY_KEY_SECRET');
 

@@ -20,7 +20,7 @@ export default function BottomNav() {
   useEffect(() => {
     const fetchUnread = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3001/notifications/unread-count');
+        const { data } = await axios.get('https://treandx.onrender.com/notifications/unread-count');
         setUnreadCount(data);
       } catch (err) {
         console.error('Failed to fetch unread count', err);

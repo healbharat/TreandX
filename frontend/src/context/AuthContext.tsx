@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(savedToken);
         axios.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
         try {
-          const { data } = await axios.get('http://localhost:3001/user/profile');
+          const { data } = await axios.get('https://treandx.onrender.com/user/profile');
           setUser(data);
           localStorage.setItem('user', JSON.stringify(data));
         } catch (err) {

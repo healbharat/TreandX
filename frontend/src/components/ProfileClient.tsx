@@ -52,17 +52,17 @@ export default function ProfileClient() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const { data: userData } = await axios.get(`http://localhost:3001/user/${username}`);
+      const { data: userData } = await axios.get(`https://treandx.onrender.com/user/${username}`);
       setUser(userData);
       
-      const { data: userPosts } = await axios.get(`http://localhost:3001/posts/user/${userData._id}`);
+      const { data: userPosts } = await axios.get(`https://treandx.onrender.com/posts/user/${userData._id}`);
       setPosts(userPosts);
 
-      const { data: highData } = await axios.get(`http://localhost:3001/stories/user/${userData._id}/highlights`);
+      const { data: highData } = await axios.get(`https://treandx.onrender.com/stories/user/${userData._id}/highlights`);
       setHighlights(highData);
 
       if (isOwnProfile) {
-        const { data: savedData } = await axios.get('http://localhost:3001/interactions/saved-posts');
+        const { data: savedData } = await axios.get('https://treandx.onrender.com/interactions/saved-posts');
         setSavedPosts(savedData);
       }
     } catch (err) {

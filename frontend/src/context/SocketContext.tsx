@@ -17,7 +17,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const { user } = useAuth();
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001');
+    const newSocket = io('https://treandx.onrender.com');
 
     newSocket.on('connect', () => {
       console.log('[WS] Connected to server');

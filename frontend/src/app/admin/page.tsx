@@ -17,7 +17,7 @@ export default function AdminOverview() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3001/admin/stats');
+        const { data } = await axios.get('https://treandx.onrender.com/admin/stats');
         setStats(data);
       } catch (err) {
         console.error('Failed to fetch stats', err);

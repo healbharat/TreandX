@@ -81,7 +81,7 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
     });
     try {
       setIsLiking(true);
-      await axios.post('http://localhost:3001/interactions/like/toggle', { postId: post._id });
+      await axios.post('https://treandx.onrender.com/interactions/like/toggle', { postId: post._id });
     } catch (err) {
       setPost({ ...post, isLiked: prevLiked, likesCount: prevCount });
     } finally {
@@ -93,7 +93,7 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
     const prevSaved = post.isSaved;
     setPost({ ...post, isSaved: !prevSaved });
     try {
-      await axios.post('http://localhost:3001/interactions/save/toggle', { postId: post._id });
+      await axios.post('https://treandx.onrender.com/interactions/save/toggle', { postId: post._id });
     } catch (err) {
       setPost({ ...post, isSaved: prevSaved });
     }
@@ -101,7 +101,7 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
 
   const handleShare = async () => {
     try {
-      await axios.post('http://localhost:3001/interactions/share', { postId: post._id });
+      await axios.post('https://treandx.onrender.com/interactions/share', { postId: post._id });
       const shareUrl = `${window.location.origin}/post/${post._id}`;
       await navigator.clipboard.writeText(shareUrl);
       alert('Link copied to clipboard!');
@@ -125,7 +125,7 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this post?')) return;
     try {
-      await axios.delete(`http://localhost:3001/posts/${post._id}`);
+      await axios.delete(`https://treandx.onrender.com/posts/${post._id}`);
       onDelete?.(post._id);
     } catch (err) {
       alert('Delete failed');
@@ -143,7 +143,7 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
     }
     try {
       setIsLoadingSummary(true);
-      const { data } = await axios.post('http://localhost:3001/ai/summarize', { content: post.caption });
+      const { data } = await axios.post('https://treandx.onrender.com/ai/summarize', { content: post.caption });
       setSummary(data.summary);
       setShowSummary(true);
     } catch (err) {

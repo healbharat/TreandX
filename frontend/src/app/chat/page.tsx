@@ -23,7 +23,7 @@ export default function ChatPage() {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3001/chat/conversations', {
+        const { data } = await axios.get('https://treandx.onrender.com/chat/conversations', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setConversations(data);
@@ -39,7 +39,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (activeChat) {
       const fetchMessages = async () => {
-        const { data } = await axios.get(`http://localhost:3001/chat/messages/${activeChat._id}`, {
+        const { data } = await axios.get(`https://treandx.onrender.com/chat/messages/${activeChat._id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setMessages(data);
@@ -75,7 +75,7 @@ export default function ChatPage() {
     try {
       const msg = newMessage;
       setNewMessage('');
-      await axios.post('http://localhost:3001/chat/message', {
+      await axios.post('https://treandx.onrender.com/chat/message', {
         conversationId: activeChat._id,
         text: msg,
       }, {

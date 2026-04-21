@@ -15,7 +15,7 @@ export default function EarningsPage() {
   useEffect(() => {
     const fetchEarnings = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3001/earnings');
+        const { data } = await axios.get('https://treandx.onrender.com/earnings');
         setEarnings(data.earnings);
       } catch (err) {
         console.error('Failed to fetch earnings', err);
@@ -32,7 +32,7 @@ export default function EarningsPage() {
     
     try {
       setLoading(true);
-      await axios.post('http://localhost:3001/earnings/withdraw', { amount });
+      await axios.post('https://treandx.onrender.com/earnings/withdraw', { amount });
       alert('Withdrawal request submitted!');
       setEarnings(prev => prev - amount);
       setWithdrawAmount('');

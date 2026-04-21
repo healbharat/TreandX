@@ -14,7 +14,7 @@ export default function PremiumPage() {
   const handlePayment = async (plan: { name: string, price: number }) => {
     try {
       setLoading(true);
-      const { data: order } = await axios.post('http://localhost:3001/payments/create-order', {
+      const { data: order } = await axios.post('https://treandx.onrender.com/payments/create-order', {
         amount: plan.price
       });
 
@@ -27,7 +27,7 @@ export default function PremiumPage() {
         order_id: order.id,
         handler: async (response: any) => {
           try {
-            const { data } = await axios.post('http://localhost:3001/payments/verify', {
+            const { data } = await axios.post('https://treandx.onrender.com/payments/verify', {
               orderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
               signature: response.razorpay_signature,

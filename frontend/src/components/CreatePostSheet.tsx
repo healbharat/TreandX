@@ -46,7 +46,7 @@ export default function CreatePostSheet({ onClose, onSuccess }: CreatePostSheetP
       formData.append('caption', caption);
       formData.append('location', location);
 
-      const { data } = await axios.post('http://localhost:3001/posts', formData, {
+      const { data } = await axios.post('https://treandx.onrender.com/posts', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`

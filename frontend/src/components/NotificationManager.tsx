@@ -20,7 +20,7 @@ export default function NotificationManager() {
         console.log('[FCM] Token acquired:', fcmToken);
         // 2. Save Token to Backend
         try {
-          await axios.post('http://localhost:3001/notifications/save-token', { fcmToken });
+          await axios.post('https://treandx.onrender.com/notifications/save-token', { fcmToken });
         } catch (err) {
           console.error('[FCM] Failed to save token to backend', err);
         }

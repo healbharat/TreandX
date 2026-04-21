@@ -28,7 +28,7 @@ export default function CommentSheet({ postId, postOwnerId, onClose }: CommentSh
   const fetchComments = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`http://localhost:3001/interactions/comments?postId=${postId}`, {
+      const { data } = await axios.get(`https://treandx.onrender.com/interactions/comments?postId=${postId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComments(data);
@@ -83,7 +83,7 @@ export default function CommentSheet({ postId, postOwnerId, onClose }: CommentSh
 
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:3001/interactions/comment', {
+      await axios.post('https://treandx.onrender.com/interactions/comment', {
         postId,
         text: newComment,
         parentId: replyingTo?._id || null,
@@ -101,7 +101,7 @@ export default function CommentSheet({ postId, postOwnerId, onClose }: CommentSh
 
   const handleToggleLike = async (commentId: string) => {
     try {
-      await axios.post(`http://localhost:3001/interactions/comment/like/${commentId}`, {}, {
+      await axios.post(`https://treandx.onrender.com/interactions/comment/like/${commentId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (err) {
@@ -111,7 +111,7 @@ export default function CommentSheet({ postId, postOwnerId, onClose }: CommentSh
 
   const handlePin = async (commentId: string) => {
     try {
-      await axios.patch(`http://localhost:3001/interactions/comment/pin/${commentId}`, {}, {
+      await axios.patch(`https://treandx.onrender.com/interactions/comment/pin/${commentId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchComments();
@@ -122,7 +122,7 @@ export default function CommentSheet({ postId, postOwnerId, onClose }: CommentSh
 
   const handleHide = async (commentId: string) => {
     try {
-      await axios.patch(`http://localhost:3001/interactions/comment/hide/${commentId}`, {}, {
+      await axios.patch(`https://treandx.onrender.com/interactions/comment/hide/${commentId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchComments();

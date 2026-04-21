@@ -26,7 +26,7 @@ export default function FollowButton({ userId, initialIsFollowing = false, isPri
 
     setLoading(true);
     try {
-      const res = await axios.post(`http://localhost:3001/follow/${userId}`, {}, {
+      const res = await axios.post(`https://treandx.onrender.com/follow/${userId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

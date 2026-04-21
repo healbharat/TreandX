@@ -23,7 +23,7 @@ export default function UserSuggestions() {
 
     const fetchSuggestions = async () => {
       try {
-        const res = await axios.get('http://localhost:3001/follow/suggestions', {
+        const res = await axios.get('https://treandx.onrender.com/follow/suggestions', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(res.data);

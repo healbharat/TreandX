@@ -35,7 +35,7 @@ export default function AdminReports() {
 
   const fetchReports = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3001/admin/reports');
+      const { data } = await axios.get('https://treandx.onrender.com/admin/reports');
       setReports(data);
     } catch (err) {
       console.error('Failed to fetch reports', err);
@@ -46,7 +46,7 @@ export default function AdminReports() {
 
   const resolveReport = async (reportId: string) => {
     try {
-      await axios.patch(`http://localhost:3001/admin/report/${reportId}/resolve`);
+      await axios.patch(`https://treandx.onrender.com/admin/report/${reportId}/resolve`);
       setReports(reports.map(r => r._id === reportId ? { ...r, status: 'resolved' } : r));
     } catch (err) {
       console.error('Failed to resolve report', err);
@@ -56,7 +56,7 @@ export default function AdminReports() {
   const blockPost = async (postId: string) => {
     if (!confirm('Are you sure you want to block this post?')) return;
     try {
-      await axios.patch(`http://localhost:3001/admin/post/${postId}/block`);
+      await axios.patch(`https://treandx.onrender.com/admin/post/${postId}/block`);
       fetchReports(); // Refresh all to show blocked status
     } catch (err) {
       console.error('Failed to block post', err);

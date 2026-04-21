@@ -31,7 +31,7 @@ export default function AdminPosts() {
 
   const fetchPosts = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3001/admin/posts');
+      const { data } = await axios.get('https://treandx.onrender.com/admin/posts');
       setPosts(data);
     } catch (err) {
       console.error('Failed to fetch posts', err);
@@ -43,7 +43,7 @@ export default function AdminPosts() {
   const blockPost = async (postId: string) => {
     if (!confirm('Are you sure you want to block this post? It will be hidden from all users.')) return;
     try {
-      await axios.patch(`http://localhost:3001/admin/post/${postId}/block`);
+      await axios.patch(`https://treandx.onrender.com/admin/post/${postId}/block`);
       setPosts(posts.map(p => p._id === postId ? { ...p, status: 'blocked' } : p));
     } catch (err) {
       console.error('Failed to block post', err);

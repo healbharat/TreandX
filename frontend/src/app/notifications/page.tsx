@@ -21,7 +21,7 @@ export default function NotificationsPage() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3001/notifications');
+        const { data } = await axios.get('https://treandx.onrender.com/notifications');
         setNotifications(data);
       } catch (err) {
         console.error('Failed to fetch notifications', err);
@@ -47,7 +47,7 @@ export default function NotificationsPage() {
 
   const markAllRead = async () => {
     try {
-      await axios.post('http://localhost:3001/notifications/read-all');
+      await axios.post('https://treandx.onrender.com/notifications/read-all');
       setNotifications(notifications.map(n => ({ ...n, isRead: true })));
     } catch (err) {
       console.error('Failed to mark all read', err);

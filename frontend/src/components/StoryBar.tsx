@@ -31,7 +31,7 @@ export default function StoryBar() {
 
   const fetchStories = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3001/stories/following');
+      const { data } = await axios.get('https://treandx.onrender.com/stories/following');
       setGroupedStories(data);
     } catch (err) {
       console.error('Failed to fetch stories', err);

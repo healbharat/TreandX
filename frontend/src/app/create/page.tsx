@@ -47,7 +47,7 @@ export default function CreatePostPage() {
     setError('');
     
     try {
-      const { data } = await axios.post('http://localhost:3001/ai/headline', { content });
+      const { data } = await axios.post('https://treandx.onrender.com/ai/headline', { content });
       setHeadline(data.headline);
     } catch (err: any) {
       console.error('Failed to generate headline', err);
@@ -70,14 +70,14 @@ export default function CreatePostPage() {
       if (image) {
         const formData = new FormData();
         formData.append('image', image);
-        const uploadRes = await axios.post('http://localhost:3001/upload/image', formData, {
+        const uploadRes = await axios.post('https://treandx.onrender.com/upload/image', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         imageUrl = uploadRes.data.url;
       }
 
       // 2. Create Post
-      await axios.post('http://localhost:3001/post/create', {
+      await axios.post('https://treandx.onrender.com/post/create', {
         content,
         category,
         imageUrl,

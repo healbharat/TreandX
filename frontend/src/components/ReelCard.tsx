@@ -27,7 +27,7 @@ export default function ReelCard({ reel, active }: ReelCardProps) {
     if (active) {
       videoRef.current.play().catch(e => console.log('Autoplay blocked'));
       // Track view
-      axios.patch(`http://localhost:3001/reels/${reel._id}/view`);
+      axios.patch(`https://treandx.onrender.com/reels/${reel._id}/view`);
     } else {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
@@ -39,7 +39,7 @@ export default function ReelCard({ reel, active }: ReelCardProps) {
     setLiked(!liked);
     setLikesCount((prev: number) => liked ? prev - 1 : prev + 1);
     try {
-      await axios.post('http://localhost:3001/interactions/like/toggle', { postId: reel._id }, {
+      await axios.post('https://treandx.onrender.com/interactions/like/toggle', { postId: reel._id }, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (err) {
@@ -49,7 +49,7 @@ export default function ReelCard({ reel, active }: ReelCardProps) {
 
   const handleRemix = async () => {
     try {
-      await axios.post(`http://localhost:3001/reels/remix/${reel._id}`, {}, {
+      await axios.post(`https://treandx.onrender.com/reels/remix/${reel._id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('Remix created! Check your profile.');

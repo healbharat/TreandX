@@ -18,7 +18,7 @@ export default function PostDetailClient() {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(`http://localhost:3001/post/${id}`);
+        const { data } = await axios.get(`https://treandx.onrender.com/post/${id}`);
         setPost(data);
       } catch (err) {
         console.error('Failed to fetch post', err);

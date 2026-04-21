@@ -24,7 +24,7 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3001/search/trending');
+        const { data } = await axios.get('https://treandx.onrender.com/search/trending');
         setTrending(data);
       } catch (err) {
         console.error('Failed to fetch trending', err);
@@ -42,9 +42,9 @@ export default function SearchPage() {
 
       setLoading(true);
       try {
-        let endpoint = 'http://localhost:3001/search';
-        if (activeTab === 'users') endpoint = 'http://localhost:3001/search/users';
-        if (activeTab === 'posts') endpoint = 'http://localhost:3001/search/posts';
+        let endpoint = 'https://treandx.onrender.com/search';
+        if (activeTab === 'users') endpoint = 'https://treandx.onrender.com/search/users';
+        if (activeTab === 'posts') endpoint = 'https://treandx.onrender.com/search/posts';
 
         const { data } = await axios.get(endpoint, { params: { q: debouncedQuery } });
         

@@ -26,7 +26,7 @@ export default function AnalyticsClient() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3001/user/analytics/summary', {
+        const { data } = await axios.get('https://treandx.onrender.com/user/analytics/summary', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAnalytics(data);

@@ -43,7 +43,7 @@ export default function CreateStorySheet({ onClose, onSuccess }: CreateStoryShee
       );
 
       // 2. Save in DB
-      await axios.post('http://localhost:3001/stories', {
+      await axios.post('https://treandx.onrender.com/stories', {
         mediaUrl: res.data.secure_url,
         type: file.type.startsWith('video') ? 'video' : 'image',
         caption,

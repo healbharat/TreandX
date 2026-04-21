@@ -23,7 +23,7 @@ export default function LoginPage() {
     setError('');
     
     try {
-      await axios.post('http://localhost:3001/auth/send-otp', { mobile });
+      await axios.post('https://treandx.onrender.com/auth/send-otp', { mobile });
       sessionStorage.setItem('temp_mobile', mobile);
       router.push('/auth/otp');
     } catch (err: any) {

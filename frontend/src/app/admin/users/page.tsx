@@ -26,7 +26,7 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3001/admin/users');
+      const { data } = await axios.get('https://treandx.onrender.com/admin/users');
       setUsers(data);
     } catch (err) {
       console.error('Failed to fetch users', err);
@@ -37,7 +37,7 @@ export default function AdminUsers() {
 
   const toggleBlock = async (userId: string) => {
     try {
-      await axios.patch(`http://localhost:3001/admin/user/${userId}/toggle-block`);
+      await axios.patch(`https://treandx.onrender.com/admin/user/${userId}/toggle-block`);
       setUsers(users.map(u => u._id === userId ? { ...u, isBlocked: !u.isBlocked } : u));
     } catch (err) {
       console.error('Failed to toggle block', err);

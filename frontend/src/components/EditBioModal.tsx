@@ -18,7 +18,7 @@ export default function EditBioModal({ currentBio, onClose, onSuccess }: EditBio
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await axios.patch('http://localhost:3001/user/update', { bio });
+      await axios.patch('https://treandx.onrender.com/user/update', { bio });
       onSuccess(bio);
     } catch (err) {
       console.error('Failed to update bio', err);

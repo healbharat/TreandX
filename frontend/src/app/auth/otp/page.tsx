@@ -59,7 +59,7 @@ export default function OtpPage() {
     setError('');
 
     try {
-      const { data } = await axios.post('http://localhost:3001/auth/verify-otp', {
+      const { data } = await axios.post('https://treandx.onrender.com/auth/verify-otp', {
         mobile,
         otp: otpValue,
       });
@@ -82,7 +82,7 @@ export default function OtpPage() {
     if (timer > 0) return;
     setTimer(30);
     try {
-      await axios.post('http://localhost:3001/auth/send-otp', { mobile });
+      await axios.post('https://treandx.onrender.com/auth/send-otp', { mobile });
     } catch (err) {}
   };
 

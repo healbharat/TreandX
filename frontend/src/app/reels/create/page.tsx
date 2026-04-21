@@ -22,7 +22,7 @@ export default function CreateReelPage() {
 
   useEffect(() => {
     const fetchAudios = async () => {
-      const { data } = await axios.get('http://localhost:3001/reels/audio');
+      const { data } = await axios.get('https://treandx.onrender.com/reels/audio');
       setAudios(data);
     };
     fetchAudios();
@@ -52,7 +52,7 @@ export default function CreateReelPage() {
     if (selectedAudio) formData.append('audioId', selectedAudio);
 
     try {
-      await axios.post('http://localhost:3001/reels', formData, {
+      await axios.post('https://treandx.onrender.com/reels', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`

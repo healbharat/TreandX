@@ -46,7 +46,7 @@ export default function SettingsPage() {
       setUploading(true);
       const form = new FormData();
       form.append('image', e.target.files[0]);
-      const { data } = await axios.post('http://localhost:3001/upload/image', form);
+      const { data } = await axios.post('https://treandx.onrender.com/upload/image', form);
       setFormData(prev => ({ ...prev, profileImage: data.url }));
     } catch (err) {
       alert('Upload failed');
@@ -68,7 +68,7 @@ export default function SettingsPage() {
   const handleSave = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.patch('http://localhost:3001/user/update', formData);
+      const { data } = await axios.patch('https://treandx.onrender.com/user/update', formData);
       updateUser(data);
       router.push(`/profile/${data.username}`);
     } catch (err: any) {

@@ -33,7 +33,7 @@ export default function ProfileSetupPage() {
     setError('');
 
     try {
-      const { data } = await axios.post('http://localhost:3001/user/setup-profile', {
+      const { data } = await axios.post('https://treandx.onrender.com/user/setup-profile', {
         name,
         username,
         profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,

@@ -19,7 +19,7 @@ export default function ReelsPage() {
 
   const fetchReels = async (pageNum: number) => {
     try {
-      const { data } = await axios.get(`http://localhost:3001/reels?page=${pageNum}`);
+      const { data } = await axios.get(`https://treandx.onrender.com/reels?page=${pageNum}`);
       if (data.length === 0) setHasMore(false);
       setReels(prev => pageNum === 1 ? data : [...prev, ...data]);
     } catch (err) {

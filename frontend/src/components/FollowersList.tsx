@@ -26,7 +26,7 @@ export default function FollowersList({ userId, type }: FollowersListProps) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/follow/${userId}/${type}`, {
+        const res = await axios.get(`https://treandx.onrender.com/follow/${userId}/${type}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         // Data structure from populate: { followerId: {...} } or { followingId: {...} }

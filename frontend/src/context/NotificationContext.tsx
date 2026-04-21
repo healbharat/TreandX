@@ -27,7 +27,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
           if (currentToken) {
             setFcmToken(currentToken);
             // Save token to backend
-            await axios.post('http://localhost:3001/notifications/token', { token: currentToken }, {
+            await axios.post('https://treandx.onrender.com/notifications/token', { token: currentToken }, {
               headers: { Authorization: `Bearer ${token}` }
             });
           }

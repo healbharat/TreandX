@@ -51,13 +51,13 @@ export default function StoryViewer({ userStories, onClose }: StoryViewerProps) 
   useEffect(() => {
     // Track view when story changes
     if (currentStory) {
-      axios.post(`http://localhost:3001/stories/${currentStory._id}/view`).catch(() => {});
+      axios.post(`https://treandx.onrender.com/stories/${currentStory._id}/view`).catch(() => {});
     }
   }, [currentStory]);
 
   const handleReact = async (emoji: string) => {
     try {
-      await axios.post(`http://localhost:3001/stories/${currentStory._id}/react`, { type: emoji });
+      await axios.post(`https://treandx.onrender.com/stories/${currentStory._id}/react`, { type: emoji });
       // Visual feedback could be added here
     } catch (err) {
       console.error('Reaction failed', err);

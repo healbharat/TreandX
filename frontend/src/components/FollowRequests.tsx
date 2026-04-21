@@ -26,7 +26,7 @@ export default function FollowRequests() {
 
     const fetchRequests = async () => {
       try {
-        const res = await axios.get('http://localhost:3001/follow/requests', {
+        const res = await axios.get('https://treandx.onrender.com/follow/requests', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setRequests(res.data);
@@ -42,7 +42,7 @@ export default function FollowRequests() {
 
   const handleAction = async (requestId: string, action: 'accept' | 'reject') => {
     try {
-      await axios.patch(`http://localhost:3001/follow/request/${requestId}`, { action }, {
+      await axios.patch(`https://treandx.onrender.com/follow/request/${requestId}`, { action }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(requests.filter(r => r._id !== requestId));

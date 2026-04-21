@@ -33,7 +33,7 @@ export default function HomePage() {
   const fetchPosts = async (pageNum: number) => {
     try {
       setLoading(true);
-      const url = `http://localhost:3001/posts/feed?page=${pageNum}&limit=10`;
+      const url = `https://treandx.onrender.com/posts/feed?page=${pageNum}&limit=10`;
       const { data } = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -52,7 +52,7 @@ export default function HomePage() {
 
   const fetchSuggested = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3001/posts/suggested', {
+      const { data } = await axios.get('https://treandx.onrender.com/posts/suggested', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSuggested(data);
@@ -63,7 +63,7 @@ export default function HomePage() {
 
   const fetchAds = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3001/ads');
+      const { data } = await axios.get('https://treandx.onrender.com/ads');
       setAds(data);
     } catch (err) {
       console.error('Failed to fetch ads', err);

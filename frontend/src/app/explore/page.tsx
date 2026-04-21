@@ -19,8 +19,8 @@ export default function ExplorePage() {
     const fetchData = async () => {
       try {
         const [postsRes, trendingRes] = await Promise.all([
-          axios.get('http://localhost:3001/search/explore'),
-          axios.get('http://localhost:3001/search/trending')
+          axios.get('https://treandx.onrender.com/search/explore'),
+          axios.get('https://treandx.onrender.com/search/trending')
         ]);
         setPosts(postsRes.data);
         setTrending(trendingRes.data);
