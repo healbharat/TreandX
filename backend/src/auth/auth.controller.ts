@@ -5,6 +5,21 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('register')
+  async register(@Body() body: any) {
+    return this.authService.register(body);
+  }
+
+  @Post('login')
+  async login(@Body() body: any) {
+    return this.authService.login(body);
+  }
+
+  @Post('firebase')
+  async verifyFirebase(@Body('idToken') idToken: string) {
+    return this.authService.verifyFirebase(idToken);
+  }
+
   @Post('send-otp')
   async sendOtp(@Body('mobile') mobile: string) {
     return this.authService.sendOtp(mobile);

@@ -15,12 +15,13 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
-import { Analytics } from "firebase/analytics";
-import { Messaging } from "firebase/messaging";
+import { getAuth, GoogleAuthProvider, RecaptchaVerifier } from "firebase/auth";
 
 // Initialize Remote Services (Client-side only)
 let analytics: Analytics | undefined;
 let messaging: Messaging | undefined;
+let auth: any;
+const googleProvider = new GoogleAuthProvider();
 
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
@@ -29,6 +30,7 @@ if (typeof window !== "undefined") {
     }
   });
   messaging = getMessaging(app);
+  auth = getAuth(app);
 }
 
-export { app, analytics, messaging };
+export { app, analytics, messaging, auth, googleProvider, RecaptchaVerifier };

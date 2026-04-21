@@ -3,8 +3,14 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class User extends Document {
-  @Prop({ required: true, unique: true })
-  mobile: string;
+  @Prop({ unique: true, sparse: true })
+  mobile?: string;
+
+  @Prop({ unique: true, sparse: true })
+  email?: string;
+
+  @Prop({ select: false })
+  password?: string;
 
   @Prop()
   name?: string;
