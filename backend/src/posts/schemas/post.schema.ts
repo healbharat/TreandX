@@ -6,33 +6,33 @@ export class Post extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 
-  @Prop({ required: true })
-  content: string;
+  @Prop({ type: [String] }) // multiple images/videos
+  mediaUrls: string[];
 
   @Prop()
-  imageUrl?: string;
+  caption: string;
 
-  @Prop({ required: true, default: 'Local' })
-  category: string;
+  @Prop({ type: [String] })
+  hashtags: string[];
+
+  @Prop({ type: [String] })
+  mentions: string[];
+
+  @Prop()
+  location: string;
 
   @Prop({ default: 0 })
   likesCount: number;
 
-  @Prop({ default: false })
-  isFlagged: boolean;
-
-  @Prop()
-  summary?: string;
-
-  @Prop()
-  headline?: string;
-
-  @Prop({ default: 'active' })
-  status: string;
+  @Prop({ default: 0 })
+  commentsCount: number;
 
   @Prop({ default: 0 })
   sharesCount: number;
+
+  @Prop({ default: 'active' })
+  status: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
-PostSchema.index({ content: 'text', category: 'text' });
+PostSchema.index({ caption: 'text', hashtags: 'text', location: 'text' });

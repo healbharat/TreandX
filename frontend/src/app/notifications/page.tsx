@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useSocket } from '@/context/SocketContext';
 import BottomNav from '@/components/BottomNav';
+import FollowRequests from '@/components/FollowRequests';
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -84,6 +85,7 @@ export default function NotificationsPage() {
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4 scrollbar-hide">
+        <FollowRequests />
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 animate-pulse space-y-4">
              <Bell size={48} className="text-muted-foreground opacity-20" />

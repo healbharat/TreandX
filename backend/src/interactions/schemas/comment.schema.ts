@@ -10,7 +10,20 @@ export class Comment extends Document {
   postId: Types.ObjectId;
 
   @Prop({ required: true })
-  content: string;
+  text: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Comment', default: null })
+  parentId: Types.ObjectId | null;
+
+  @Prop({ default: 0 })
+  likesCount: number;
+
+  @Prop({ default: false })
+  isPinned: boolean;
+
+  @Prop({ default: false })
+  isHidden: boolean;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
+CommentSchema.index({ postId: 1, parentId: 1, createdAt: -1 });

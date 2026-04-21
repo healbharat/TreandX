@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: "Join the conversation on TreandX. Real-time news and social interactions.",
 };
 
+import { NotificationProvider } from "@/context/NotificationContext";
+import { Toaster } from "react-hot-toast";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,12 +25,15 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <SocketProvider>
-            <NotificationManager />
-            <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-background overflow-hidden animate-in">
-              <div className="w-full max-w-[420px] h-full flex flex-col">
-                {children}
-              </div>
-            </main>
+            <NotificationProvider>
+              <NotificationManager />
+              <Toaster />
+              <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-background overflow-hidden animate-in">
+                <div className="w-full max-w-[420px] h-full flex flex-col">
+                  {children}
+                </div>
+              </main>
+            </NotificationProvider>
           </SocketProvider>
         </AuthProvider>
       </body>

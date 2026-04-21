@@ -11,6 +11,7 @@ import { EventsModule } from '../events/events.module';
 import { Follow, FollowSchema } from '../interactions/schemas/follow.schema';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { EarningsModule } from '../earnings/earnings.module';
+import { User, UserSchema } from '../users/schemas/user.schema';
 
 @Module({
   imports: [
@@ -22,10 +23,11 @@ import { EarningsModule } from '../earnings/earnings.module';
       { name: Like.name, schema: LikeSchema },
       { name: Save.name, schema: SaveSchema },
       { name: Follow.name, schema: FollowSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   providers: [PostsService, UploadService],
   controllers: [PostsController],
-  exports: [MongooseModule],
+  exports: [MongooseModule, UploadService],
 })
 export class PostsModule {}

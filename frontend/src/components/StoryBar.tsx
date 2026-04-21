@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import StoryViewer from './StoryViewer';
 import CreateStorySheet from './CreateStorySheet';
 
@@ -40,78 +41,85 @@ export default function StoryBar() {
   };
 
   return (
-    <div className="mb-8 pl-4">
-      <div className="flex items-center space-x-4 overflow-x-auto no-scrollbar pb-2">
+    <div className="mb-10 pl-5">
+      <div className="flex items-center space-x-6 overflow-x-auto no-scrollbar py-2">
         {/* Create Story Button */}
-        <div className="flex flex-col items-center space-y-2 flex-shrink-0">
+        <motion.div 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex flex-col items-center space-y-3 flex-shrink-0"
+        >
           <button 
             onClick={() => setShowCreateStory(true)}
-            className="relative w-16 h-16 rounded-full p-0.5 border-2 border-dashed border-white/20 flex items-center justify-center group hover:border-primary transition-all"
+            className="relative w-20 h-20 rounded-[28px] p-1 bg-white/5 border border-white/10 flex items-center justify-center transition-all bg-[#141414]"
           >
-            <div className="w-14 h-14 rounded-full overflow-hidden relative">
-              <img src={user?.profileImage} alt="" className="w-full h-full object-cover opacity-60" />
+            <div className="w-full h-full rounded-[22px] overflow-hidden relative">
+              <img src={user?.profileImage} alt="" className="w-full h-full object-cover opacity-40 grayscale" />
             </div>
-            <div className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border-2 border-background shadow-lg group-hover:scale-110 transition-transform">
-              <Plus size={12} strokeWidth={4} />
+            <div className="absolute inset-0 flex items-center justify-center">
+               <div className="bg-primary text-white rounded-xl p-1.5 shadow-2xl shadow-primary/40 border-2 border-[#141414]">
+                 <Plus size={16} strokeWidth={4} />
+               </div>
             </div>
           </button>
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">You</span>
-        </div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">You</span>
+        </motion.div>
 
         {/* Following Stories */}
-        {groupedStories.map((group) => (
-          <div key={group.user._id} className="flex flex-col items-center space-y-2 flex-shrink-0">
-            <button 
-              onClick={() => setSelectedUserStories(group)}
-              className="relative w-16 h-16 rounded-full p-[2.5px] animated-story-border hover:scale-105 transition-all"
+        <AnimatePresence>
+          {groupedStories.map((group, idx) => (
+            <motion.div 
+              key={group.user._id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex flex-col items-center space-y-3 flex-shrink-0"
             >
-              <div className="w-full h-full rounded-full border-2 border-background overflow-hidden">
-                <img src={group.user.profileImage} alt={group.user.username} className="w-full h-full object-cover" />
-              </div>
-            </button>
-            <span className="text-[10px] font-black text-white/70 uppercase tracking-tighter truncate w-16 text-center italic">
-              {group.user.username}
-            </span>
-          </div>
-        ))}
+              <button 
+                onClick={() => setSelectedUserStories(group)}
+                className="relative w-20 h-20 rounded-[28px] p-0.5 story-ring animate-flow transition-all"
+              >
+                <div className="w-full h-full rounded-[26px] border-[3px] border-[#0f0f0f] overflow-hidden bg-[#141414]">
+                  <img src={group.user.profileImage} alt={group.user.username} className="w-full h-full object-cover" />
+                </div>
+              </button>
+              <span className="text-[10px] font-black text-white/60 uppercase tracking-tighter truncate w-20 text-center italic">
+                {group.user.username}
+              </span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
         {loading && [1, 2, 3].map(i => (
-          <div key={i} className="flex flex-col items-center space-y-2 flex-shrink-0 animate-pulse">
-            <div className="w-16 h-16 rounded-full bg-white/5" />
+          <div key={i} className="flex flex-col items-center space-y-3 flex-shrink-0 animate-pulse">
+            <div className="w-20 h-20 rounded-[28px] bg-white/5" />
             <div className="w-12 h-2 bg-white/5 rounded" />
           </div>
         ))}
       </div>
 
-      {selectedUserStories && (
-        <StoryViewer 
-          userStories={selectedUserStories} 
-          onClose={() => setSelectedUserStories(null)} 
-        />
-      )}
+      <AnimatePresence>
+        {selectedUserStories && (
+          <StoryViewer 
+            userStories={selectedUserStories} 
+            onClose={() => setSelectedUserStories(null)} 
+          />
+        )}
+      </AnimatePresence>
 
-      {showCreateStory && (
-        <CreateStorySheet 
-          onClose={() => setShowCreateStory(false)} 
-          onSuccess={() => {
-            setShowCreateStory(false);
-            fetchStories();
-          }}
-        />
-      )}
-
-      <style jsx>{`
-        .animated-story-border {
-          background: linear-gradient(45deg, #E11D48, #FB7185, #F43F5E);
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
+      <AnimatePresence>
+        {showCreateStory && (
+          <CreateStorySheet 
+            onClose={() => setShowCreateStory(false)} 
+            onSuccess={() => {
+              setShowCreateStory(false);
+              fetchStories();
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

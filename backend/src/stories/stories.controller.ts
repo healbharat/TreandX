@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Req, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards, Req, Delete, Patch } from '@nestjs/common';
 import { StoriesService } from './stories.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -30,5 +30,15 @@ export class StoriesController {
   @Delete(':id')
   async deleteStory(@Req() req, @Param('id') id: string) {
     return this.storiesService.deleteStory(id, req.user.userId);
+  }
+
+  @Patch(':id/highlight')
+  async toggleHighlight(@Req() req, @Param('id') storyId: string) {
+    return this.storiesService.toggleHighlight(storyId, req.user.userId);
+  }
+
+  @Get('user/:userId/highlights')
+  async getHighlights(@Param('userId') userId: string) {
+    return this.storiesService.getHighlights(userId);
   }
 }

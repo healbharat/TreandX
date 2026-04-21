@@ -13,12 +13,19 @@ export class UploadService {
   }
 
   async uploadImage(file: any): Promise<string> {
+    return this.uploadMedia(file);
+  }
+
+  async uploadMedia(file: any): Promise<string> {
     return new Promise((resolve, reject) => {
-      const upload = cloudinary.uploader.upload_stream((error, result) => {
-        if (error) return reject(error);
-        if (!result) return reject(new Error('Cloudinary upload failed: no result'));
-        resolve(result.secure_url);
-      });
+      const upload = cloudinary.uploader.upload_stream(
+        { resource_type: 'auto' },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('Cloudinary upload failed: no result'));
+          resolve(result.secure_url);
+        }
+      );
       upload.end(file.buffer);
     });
   }

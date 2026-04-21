@@ -12,6 +12,14 @@ interface User {
   profileImage?: string;
   isProfileComplete: boolean;
   role: string;
+  isPremium?: boolean;
+  bio?: string;
+  links?: string[];
+  profileType?: string;
+  isPrivate?: boolean;
+  followersCount?: number;
+  followingCount?: number;
+  _id?: string;
 }
 
 interface AuthContextType {

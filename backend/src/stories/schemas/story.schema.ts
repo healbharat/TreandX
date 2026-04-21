@@ -9,11 +9,11 @@ export class Story extends Document {
   @Prop({ required: true })
   mediaUrl: string;
 
-  @Prop({ default: 'image' })
-  type: string; // image, video, text
+  @Prop({ required: true, enum: ['image', 'video', 'text'] })
+  type: string;
 
   @Prop()
-  caption: string;
+  caption?: string;
 
   @Prop({ required: true })
   expiresAt: Date;
@@ -27,8 +27,21 @@ export class Story extends Document {
   }], default: [] })
   reactions: { userId: Types.ObjectId, type: string }[];
 
-  @Prop({ default: 'followers' })
-  visibility: string; // public, followers, close_friends
+  @Prop({ default: false })
+  isHighlight: boolean;
+
+  @Prop({ default: false })
+  isCloseFriends: boolean;
+
+  @Prop({ type: Object, default: null }) // sticker: { type: 'poll', question: '...', options: [...] }
+  sticker: any;
+
+  @Prop({ type: Array, default: [] }) // links or interactive elements
+  elements: any[];
+
+  @Prop({ type: [String], default: [] })
+  mentions: string[];
 }
 
 export const StorySchema = SchemaFactory.createForClass(Story);
+StorySchema.index({ userId: 1, expiresAt: 1 });

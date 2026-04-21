@@ -1,15 +1,11 @@
-import { Controller, Get, Post, Body, Query, UseGuards, Request, UseInterceptors, UploadedFile, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Query, UseGuards, Request, UseInterceptors, UploadedFiles, Param } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadService } from './upload.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
-@Controller()
+@Controller('posts')
 export class PostsController {
-  constructor(
-    private readonly postsService: PostsService,
-    private readonly uploadService: UploadService,
-  ) {}
+  constructor(private readonly postsService: PostsService) {}
 
   @Get('feed')
   async getFeed(
@@ -22,37 +18,39 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('post/create')
-  async createPost(
-    @Body() postData: { content: string; category: string; imageUrl?: string; headline?: string },
-    @Request() req,
-  ) {
-    return this.postsService.createPost(
-      req.user.userId,
-      postData.content,
-      postData.category,
-      postData.imageUrl,
-      postData.headline,
-    );
+  @Get('suggested')
+  async getSuggested(@Request() req) {
+    return this.postsService.getSuggestedPosts(req.user.userId);
+  }
+
+  @Get(':id')
+  async getPost(@Param('id') id: string, @Request() req) {
+    const userId = req.user?.userId;
+    return this.postsService.getPostById(id, userId);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('upload/image')
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadImage(@UploadedFile() file: any) {
-    const url = await this.uploadService.uploadImage(file);
-    return { url };
+  @Post()
+  @UseInterceptors(FilesInterceptor('files', 10))
+  async createPost(@UploadedFiles() files: any[], @Body() body: any, @Request() req) {
+    return this.postsService.createPost(req.user.userId, body, files);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('user/:id/posts')
+  @Patch(':id')
+  async updatePost(@Param('id') id: string, @Body() body: any, @Request() req) {
+    return this.postsService.updatePost(id, req.user.userId, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deletePost(@Param('id') id: string, @Request() req) {
+    return this.postsService.deletePost(id, req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user/:id')
   async getUserPosts(@Param('id') userId: string) {
     return this.postsService.getUserPosts(userId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Delete('post/:id')
-  async deletePost(@Param('id') postId: string, @Request() req) {
-    return this.postsService.deletePost(postId, req.user.userId);
   }
 }

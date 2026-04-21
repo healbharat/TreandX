@@ -7,8 +7,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':username')
-  async getByUsername(@Param('username') username: string) {
-    return this.usersService.findByUsername(username);
+  async getByUsername(@Param('username') username: string, @Request() req) {
+    const user = await this.usersService.findByUsername(username);
+    if (req.user?.userId) {
+       await this.usersService.trackProfileView(user._id.toString(), req.user.userId);
+    }
+    return user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('analytics/summary')
+  async getAnalytics(@Request() req) {
+    return this.usersService.getCreatorAnalytics(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)

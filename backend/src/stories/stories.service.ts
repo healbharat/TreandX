@@ -83,10 +83,22 @@ export class StoriesService {
     return { success: true };
   }
 
+  async toggleHighlight(storyId: string, userId: string) {
+    const story = await this.storyModel.findOne({ _id: new Types.ObjectId(storyId), userId: new Types.ObjectId(userId) });
+    if (!story) throw new Error('Story not found');
+    story.isHighlight = !story.isHighlight;
+    await story.save();
+    return story;
+  }
+
+  async getHighlights(userId: string) {
+    return this.storyModel.find({ userId: new Types.ObjectId(userId), isHighlight: true }).sort({ createdAt: -1 }).exec();
+  }
+
   @Cron(CronExpression.EVERY_HOUR)
   async cleanupExpiredStories() {
     const now = new Date();
-    const result = await this.storyModel.deleteMany({ expiresAt: { $lt: now } });
+    const result = await this.storyModel.deleteMany({ expiresAt: { $lt: now }, isHighlight: false });
     console.log(`[STORY CRON] Deleted ${result.deletedCount} expired stories.`);
   }
 }

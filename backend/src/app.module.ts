@@ -17,6 +17,9 @@ import { PaymentsModule } from './payments/payments.module';
 import { AdsModule } from './ads/ads.module';
 import { EarningsModule } from './earnings/earnings.module';
 import { StoriesModule } from './stories/stories.module';
+import { FollowsModule } from './follows/follows.module';
+import { ReelsModule } from './reels/reels.module';
+import { ChatModule } from './chat/chat.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -51,6 +54,9 @@ import { AppController } from './app.controller';
     AdsModule,
     EarningsModule,
     StoriesModule,
+    FollowsModule,
+    ReelsModule,
+    ChatModule,
   ],
   controllers: [AppController],
 })

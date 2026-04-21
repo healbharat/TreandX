@@ -217,13 +217,15 @@ export default function SearchPage() {
   );
 }
 
+import FollowButton from '@/components/FollowButton';
+
 function UserListItem({ user }: { user: any }) {
   return (
-    <Link 
-      href={`/profile/${user.username || user._id}`}
-      className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-primary/5 hover:border-primary/20 transition-all active:scale-[0.98]"
-    >
-      <div className="flex items-center space-x-3">
+    <div className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-primary/5 hover:border-primary/20 transition-all">
+      <Link 
+        href={`/profile/${user.username || user._id}`}
+        className="flex items-center space-x-3 flex-1"
+      >
         <div className="w-12 h-12 rounded-full overflow-hidden bg-primary/20 flex-shrink-0">
           {user.profileImage ? (
             <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
@@ -237,11 +239,9 @@ function UserListItem({ user }: { user: any }) {
           <p className="font-bold text-sm">{user.name || 'Anonymous'}</p>
           <p className="text-xs text-muted-foreground">@{user.username || 'user'}</p>
         </div>
-      </div>
-      <button className="px-4 py-1.5 rounded-full bg-white text-black text-xs font-bold hover:bg-neutral-200 transition-colors">
-        View
-      </button>
-    </Link>
+      </Link>
+      <FollowButton userId={user._id} />
+    </div>
   );
 }
 

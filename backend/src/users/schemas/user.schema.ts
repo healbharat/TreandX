@@ -36,6 +36,12 @@ export class User extends Document {
   @Prop()
   bio: string;
 
+  @Prop([String])
+  links: string[];
+
+  @Prop({ default: 'personal' })
+  profileType: string; // 'personal' | 'creator' | 'business'
+
   @Prop({ default: 0 })
   followersCount: number;
 
@@ -44,6 +50,9 @@ export class User extends Document {
 
   @Prop({ default: 0 })
   earnings: number;
+
+  @Prop({ default: false })
+  isPrivate: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

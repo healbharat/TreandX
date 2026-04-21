@@ -22,10 +22,11 @@ export class SearchService {
   async searchUsers(query: string, limit = 20) {
     return this.userModel
       .find(
-        { $text: { $search: query } },
-        { score: { $meta: 'textScore' } }
+        { $or: [
+          { username: { $regex: query, $options: 'i' } },
+          { name: { $regex: query, $options: 'i' } }
+        ]},
       )
-      .sort({ score: { $meta: 'textScore' } })
       .limit(limit)
       .exec();
   }
@@ -33,41 +34,60 @@ export class SearchService {
   async searchPosts(query: string, limit = 20) {
     return this.postModel
       .find(
-        { $text: { $search: query } },
-        { score: { $meta: 'textScore' } }
+        { $or: [
+          { caption: { $regex: query, $options: 'i' } },
+          { hashtags: { $in: [query.replace('#', '').toLowerCase()] } }
+        ]}
       )
-      .sort({ score: { $meta: 'textScore' } })
       .limit(limit)
       .populate('userId', 'name username profileImage')
       .exec();
   }
 
+  async getExploreFeed(page: number = 1, limit: number = 20) {
+    // 1. High engagement posts
+    const posts = await this.postModel
+      .find()
+      .populate('userId', 'name username profileImage')
+      .sort({ likesCount: -1, createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean()
+      .exec();
+
+    // 2. Mix in some random trending topics
+    return posts;
+  }
+
   async getTrending() {
-    // Basic trending: Extract hashtags from last 200 posts
     const recentPosts = await this.postModel
-      .find({ isFlagged: false })
-      .sort({ createdAt: -1 })
-      .limit(200)
-      .select('content')
+      .find({ createdAt: { $gt: new Date(Date.now() - 48 * 60 * 60 * 1000) } }) // Last 48h
+      .select('hashtags')
+      .lean()
       .exec();
 
     const hashtagMap = new Map<string, number>();
     
     recentPosts.forEach(post => {
-      const hashtags = post.content.match(/#[\w\d]+/g);
-      if (hashtags) {
-        hashtags.forEach(tag => {
-          const cleanTag = tag.toLowerCase();
-          hashtagMap.set(cleanTag, (hashtagMap.get(cleanTag) || 0) + 1);
+      if (post.hashtags) {
+        post.hashtags.forEach(tag => {
+          hashtagMap.set(tag, (hashtagMap.get(tag) || 0) + 1);
         });
       }
     });
 
-    const sortedTrending = Array.from(hashtagMap.entries())
-      .map(([tag, count]) => ({ tag, count }))
+    return Array.from(hashtagMap.entries())
+      .map(([tag, count]) => ({ tag: `#${tag}`, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
+  }
 
-    return sortedTrending;
+  async searchByHashtag(tag: string) {
+    const cleanTag = tag.replace('#', '').toLowerCase();
+    return this.postModel
+      .find({ hashtags: cleanTag })
+      .populate('userId', 'name username profileImage')
+      .sort({ likesCount: -1 })
+      .exec();
   }
 }
