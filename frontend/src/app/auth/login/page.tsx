@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AtSign, Lock, ChevronRight, Grapes, Smartphone, ShieldCheck, Github } from 'lucide-react';
+import { AtSign, Lock, ChevronRight, Smartphone, ShieldCheck } from 'lucide-react';
 import { API_BASE_URL } from '@/lib/api';
 import { auth, googleProvider } from '@/lib/firebase';
 import { signInWithPopup } from 'firebase/auth';
