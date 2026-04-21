@@ -132,13 +132,13 @@ export class InteractionsService {
 
     if (existing) {
       await this.commentLikeModel.deleteOne({ _id: existing._id });
-      const comment = await this.commentModel.findByIdAndUpdate(cId, { $inc: { likesCount: -1 } }, { new: true });
+      const comment = await this.commentModel.findByIdAndUpdate(cId, { $inc: { likesCount: -1 } }, { returnDocument: 'after' });
       
       this.eventsGateway.server.emit("commentLiked", { commentId, likesCount: comment?.likesCount });
       return { liked: false };
     } else {
       await this.commentLikeModel.create({ userId: uId, commentId: cId });
-      const comment = await this.commentModel.findByIdAndUpdate(cId, { $inc: { likesCount: 1 } }, { new: true });
+      const comment = await this.commentModel.findByIdAndUpdate(cId, { $inc: { likesCount: 1 } }, { returnDocument: 'after' });
       
       this.eventsGateway.server.emit("commentLiked", { commentId, likesCount: comment?.likesCount });
       return { liked: true };
@@ -210,12 +210,12 @@ export class InteractionsService {
 
     if (existingLike) {
       await this.likeModel.deleteOne({ _id: existingLike._id });
-      const post = await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: -1 } }, { new: true });
+      const post = await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: -1 } }, { returnDocument: 'after' });
       this.eventsGateway.emitNewLike({ postId, likesCount: post?.likesCount || 0 });
       return { liked: false };
     } else {
       await this.likeModel.create({ userId: uId, postId: pId });
-      const post = await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: 1 } }, { new: true });
+      const post = await this.postModel.findByIdAndUpdate(pId, { $inc: { likesCount: 1 } }, { returnDocument: 'after' });
       this.eventsGateway.emitNewLike({ postId, likesCount: post?.likesCount || 0 });
       if (post && post.userId.toString() !== userId) {
         const liker = await this.commentModel.db.model('User').findById(userId);
@@ -245,7 +245,7 @@ export class InteractionsService {
   }
 
   async sharePost(postId: string) {
-    const post = await this.postModel.findByIdAndUpdate(postId, { $inc: { sharesCount: 1 } }, { new: true });
+    const post = await this.postModel.findByIdAndUpdate(postId, { $inc: { sharesCount: 1 } }, { returnDocument: 'after' });
     if (!post) throw new NotFoundException('Post not found');
     this.eventsGateway.emitPostShared({ postId, sharesCount: post.sharesCount });
     return { sharesCount: post.sharesCount };

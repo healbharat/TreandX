@@ -90,7 +90,7 @@ export class ChatService {
     return this.messageModel.findByIdAndUpdate(
       messageId,
       { $addToSet: { seenBy: new Types.ObjectId(userId) } },
-      { new: true }
+      { returnDocument: 'after' }
     );
   }
 
@@ -98,7 +98,7 @@ export class ChatService {
     await this.messageModel.findByIdAndUpdate(
       messageId,
       { $push: { reactions: { userId: new Types.ObjectId(userId), emoji } } },
-      { new: true }
+      { returnDocument: 'after' }
     );
     const message = await this.messageModel.findById(messageId);
     if (!message) throw new NotFoundException('Message not found');

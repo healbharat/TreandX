@@ -40,7 +40,7 @@ export class AdminService {
     const post = await this.postModel.findByIdAndUpdate(
       postId,
       { status: 'blocked' },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!post) throw new NotFoundException('Post not found');
     return post;
@@ -63,7 +63,7 @@ export class AdminService {
     const report = await this.reportModel.findByIdAndUpdate(
       reportId,
       { status: 'resolved' },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!report) throw new NotFoundException('Report not found');
     return report;

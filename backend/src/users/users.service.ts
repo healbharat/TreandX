@@ -30,7 +30,7 @@ export class UsersService {
       const existing = await this.userModel.findOne({ username: data.username, _id: { $ne: id } });
       if (existing) throw new ConflictException('Username already taken');
     }
-    return this.userModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+    return this.userModel.findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' });
   }
 
   async setupProfile(id: string, profileData: { name: string; username: string; profileImage?: string }) {
@@ -40,7 +40,7 @@ export class UsersService {
     const user = await this.userModel.findByIdAndUpdate(
       id,
       { ...profileData, isProfileComplete: true },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!user) throw new NotFoundException('User not found');
     return user;

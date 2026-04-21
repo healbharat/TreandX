@@ -104,7 +104,7 @@ export class NotificationsService implements OnModuleInit {
   }
 
   async markAsRead(notificationId: string) {
-    return this.notificationModel.findByIdAndUpdate(notificationId, { isRead: true }, { new: true });
+    return this.notificationModel.findByIdAndUpdate(notificationId, { isRead: true }, { returnDocument: 'after' });
   }
 
   async markAllAsRead(userId: string) {

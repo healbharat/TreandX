@@ -60,7 +60,7 @@ export class StoriesService {
     return this.storyModel.findByIdAndUpdate(
       storyId,
       { $addToSet: { views: new Types.ObjectId(userId) } },
-      { new: true }
+      { returnDocument: 'after' }
     );
   }
 
@@ -68,7 +68,7 @@ export class StoriesService {
     return this.storyModel.findByIdAndUpdate(
       storyId,
       { $push: { reactions: { userId: new Types.ObjectId(userId), type } } },
-      { new: true }
+      { returnDocument: 'after' }
     );
   }
 

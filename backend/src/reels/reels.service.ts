@@ -79,7 +79,7 @@ export class ReelsService {
   }
 
   async incrementView(reelId: string) {
-    return this.reelModel.findByIdAndUpdate(reelId, { $inc: { viewsCount: 1 } }, { new: true });
+    return this.reelModel.findByIdAndUpdate(reelId, { $inc: { viewsCount: 1 } }, { returnDocument: 'after' });
   }
 
   async getAudios() {
