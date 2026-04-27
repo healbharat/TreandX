@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal, Zap, Crown, MapPin, ChevronLeft, ChevronRight, Edit3, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -49,6 +50,7 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
   const [showMenu, setShowMenu] = useState(false);
   const { socket } = useSocket();
   const { user } = useAuth();
+  const router = useRouter();
 
   const isOwner = user?._id === post.userId._id;
 
