@@ -1,70 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #080808;
+  --color-background: #000000;
   --color-foreground: #ffffff;
   
-  --color-card: #121212;
+  --color-card: #000000;
   --color-card-foreground: #ffffff;
   
   --color-primary: #E11D48;
   --color-primary-foreground: #ffffff;
   
-  --color-muted: #1a1a1a;
+  --color-muted: #121212;
   --color-muted-foreground: #888888;
   
-  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(255, 255, 255, 0.08);
+
+  --animate-scale-up: scale-up 0.3s ease-out;
+}
+
+@keyframes scale-up {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 @layer base {
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    @apply antialiased overflow-x-hidden;
-    letter-spacing: -0.015em;
+    @apply antialiased overflow-x-hidden selection:bg-rose-500/30;
+    letter-spacing: -0.012em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 }
 
 .glass {
-  background: rgba(15, 15, 15, 0.7);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .premium-card {
-  @apply rounded-[32px] bg-[#111111] border border-white/5 transition-all duration-300;
+  @apply rounded-none bg-black border-y border-[rgba(255,255,255,0.05)] transition-all duration-300;
+  @media (min-width: 768px) {
+    @apply rounded-xl border-x;
+  }
 }
 
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-tr from-rose-500 via-primary to-rose-400;
+  @apply bg-clip-text text-transparent bg-gradient-to-tr from-rose-500 via-rose-400 to-amber-300;
 }
 
 .story-ring {
   padding: 2.5px;
-  background: linear-gradient(45deg, #E11D48, #F43F5E, #8B5CF6, #3B82F6);
-  background-size: 200% 200%;
-}
-
-@keyframes flow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-flow {
-  animation: flow 4s ease infinite;
-}
-
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  background: conic-gradient(from 0deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  border-radius: 50%;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -73,4 +63,27 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.aspect-story {
+  aspect-ratio: 9/16;
+}
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Instagram style pulse for loading */
+.skeleton-pulse {
+  background: linear-gradient(90deg, #121212 25%, #1a1a1a 50%, #121212 75%);
+  background-size: 200% 100%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

@@ -153,6 +153,20 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
     }
   };
 
+  const [showHeartPop, setShowHeartPop] = useState(false);
+  const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
+  const doubleTapRef = useRef<number>(0);
+
+  const handleDoubleTap = () => {
+    const now = Date.now();
+    if (now - doubleTapRef.current < 300) {
+      if (!post.isLiked) handleLike();
+      setShowHeartPop(true);
+      setTimeout(() => setShowHeartPop(false), 800);
+    }
+    doubleTapRef.current = now;
+  };
+
   const isVideo = (url: string) => {
     if (!url) return false;
     return url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('video/upload');
@@ -170,27 +184,29 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
         <div className="flex items-center justify-between p-4 px-5">
           <div className="flex items-center space-x-3">
             <div className="relative">
-               <div className={`w-10 h-10 rounded-[14px] p-0.5 ${post.userId.isPremium ? 'bg-gradient-to-tr from-amber-400 to-yellow-600' : 'bg-white/10'}`}>
-                 <img src={post.userId.profileImage} alt="" className="w-full h-full rounded-[12px] object-cover" />
+               <div className={`w-10 h-10 rounded-full p-0.5 ${post.userId.isPremium ? 'bg-gradient-to-tr from-amber-400 to-yellow-600' : 'bg-white/10'}`}>
+                 <img src={post.userId.profileImage} alt="" className="w-full h-full rounded-full object-cover border border-[#1a1a1a]" />
                </div>
                {post.userId.isPremium && (
-                 <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-0.5 border-2 border-[#090909]">
+                 <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-0.5 border-2 border-[#121212]">
                     <Crown size={8} className="text-white fill-white" />
                  </div>
                )}
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h4 className="font-bold text-sm tracking-tight text-white/90">@{post.userId.username}</h4>
+                <h4 className="font-bold text-sm tracking-tight text-white/90 cursor-pointer" onClick={() => router.push(`/profile/${post.userId.username}`)}>
+                  {post.userId.username}
+                </h4>
                 {!isOwner && <FollowButton userId={post.userId._id} />}
               </div>
               <div className="flex items-center space-x-1 opacity-50">
                  {post.location && (
-                   <span className="text-[9px] font-medium flex items-center">
-                     <MapPin size={8} className="mr-0.5" /> {post.location} •
+                   <span className="text-[10px] font-medium flex items-center">
+                     {post.location} •
                    </span>
                  )}
-                 <span className="text-[9px] font-medium">
+                 <span className="text-[10px] font-medium">
                    {formatDistanceToNow(new Date(post.createdAt))} ago
                  </span>
               </div>
@@ -236,34 +252,51 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
         </div>
 
         {/* Carousel Media */}
-        <div className="relative aspect-square md:aspect-video bg-black flex items-center justify-center overflow-hidden">
+        <div 
+          className="relative aspect-square bg-[#090909] flex items-center justify-center overflow-hidden cursor-pointer"
+          onClick={handleDoubleTap}
+        >
           {post.mediaUrls.length > 0 ? (
             <>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentMediaIndex}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="w-full h-full"
                 >
                   {isVideo(post.mediaUrls[currentMediaIndex]) ? (
                     <video 
                       src={post.mediaUrls[currentMediaIndex]} 
-                      className="w-full h-full object-contain" 
-                      controls 
+                      className="w-full h-full object-cover" 
                       autoPlay 
                       muted 
                       loop
+                      playsInline
                     />
                   ) : (
                     <img 
                       src={post.mediaUrls[currentMediaIndex]} 
                       alt="" 
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                   )}
                 </motion.div>
+              </AnimatePresence>
+
+              {/* Heart Pop Animation */}
+              <AnimatePresence>
+                {showHeartPop && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 0] }}
+                    transition={{ duration: 0.8, ease: "backOut" }}
+                    className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+                  >
+                    <Heart size={100} className="text-white fill-white drop-shadow-2xl" />
+                  </motion.div>
+                )}
               </AnimatePresence>
 
               {/* Carousel Controls */}
@@ -271,26 +304,26 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
                 <>
                   {currentMediaIndex > 0 && (
                     <button 
-                      onClick={prevMedia}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all"
+                      onClick={(e) => { e.stopPropagation(); prevMedia(); }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white backdrop-blur-md hover:bg-white/10 transition-all z-20"
                     >
-                      <ChevronLeft size={18} />
+                      <ChevronLeft size={16} />
                     </button>
                   )}
                   {currentMediaIndex < post.mediaUrls.length - 1 && (
                     <button 
-                      onClick={nextMedia}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all"
+                      onClick={(e) => { e.stopPropagation(); nextMedia(); }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 text-white backdrop-blur-md hover:bg-white/10 transition-all z-20"
                     >
-                      <ChevronRight size={18} />
+                      <ChevronRight size={16} />
                     </button>
                   )}
                   {/* Dots Indicator */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-1.5 p-2 bg-black/20 backdrop-blur-sm rounded-full">
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-1.5 z-20">
                     {post.mediaUrls.map((_, i) => (
                       <div 
                         key={i} 
-                        className={`h-1 rounded-full transition-all duration-300 ${i === currentMediaIndex ? 'w-4 bg-primary' : 'w-1 bg-white/40'}`}
+                        className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${i === currentMediaIndex ? 'bg-white scale-125' : 'bg-white/40'}`}
                       />
                     ))}
                   </div>
@@ -298,27 +331,77 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
               )}
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center text-white/10 space-y-2">
+            <div className="flex flex-col items-center justify-center text-white/5 space-y-2">
                <Zap size={48} strokeWidth={1} />
-               <p className="text-[10px] font-black uppercase tracking-widest italic">Signal lost. No visual data.</p>
+               <p className="text-[10px] font-black uppercase tracking-widest italic">Signal lost.</p>
             </div>
           )}
         </div>
 
         {/* Content Box */}
-        <div className="p-5 px-6">
-          <div className="space-y-4 mb-5">
-             <div className="flex items-center justify-between">
-                <p className="text-sm font-medium leading-relaxed tracking-tight text-white/90 underline-offset-4">
-                  <span className="font-black mr-2">@{post.userId.username}</span>
-                  {post.caption}
-                </p>
-                <button 
-                   onClick={handleFetchSummary}
-                   className="p-2 rounded-xl bg-white/5 text-primary/40 hover:text-primary transition-all ml-4"
-                >
-                   {isLoadingSummary ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
-                </button>
+        <div className="p-4 pt-4">
+          {/* Actions Bar */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-5">
+              <motion.button 
+                onClick={handleLike}
+                whileTap={{ scale: 1.4 }}
+                className={`${post.isLiked ? 'text-rose-500' : 'text-white'}`}
+              >
+                <Heart size={26} fill={post.isLiked ? 'currentColor' : 'none'} className="transition-all duration-300" />
+              </motion.button>
+
+              <button 
+                onClick={() => setShowComments(true)}
+                className="text-white hover:opacity-70 transition-opacity"
+              >
+                <MessageCircle size={26} />
+              </button>
+              
+              <button 
+                onClick={handleShare}
+                className="text-white hover:opacity-70 transition-opacity"
+              >
+                <Share2 size={26} />
+              </button>
+            </div>
+
+            <button 
+              onClick={handleSave}
+              className={`transition-all ${post.isSaved ? 'text-white' : 'text-white'}`}
+            >
+              <Bookmark size={26} fill={post.isSaved ? 'currentColor' : 'none'} />
+            </button>
+          </div>
+
+          <div className="space-y-2">
+             <p className="text-sm font-bold text-white tracking-tight tabular-nums">
+               {post.likesCount.toLocaleString()} {post.likesCount === 1 ? 'like' : 'likes'}
+             </p>
+
+             <div className="text-sm leading-relaxed tracking-tight text-white/80">
+               <span className="font-bold text-white mr-2">@{post.userId.username}</span>
+               {post.caption.length > 80 && !isCaptionExpanded ? (
+                 <>
+                   {post.caption.slice(0, 80)}...
+                   <button 
+                     onClick={() => setIsCaptionExpanded(true)}
+                     className="text-white/40 ml-1 font-bold"
+                   >
+                     more
+                   </button>
+                 </>
+               ) : (
+                 post.caption
+               )}
+               
+               <button 
+                  onClick={handleFetchSummary}
+                  className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold ml-2 hover:bg-primary/20 transition-all"
+               >
+                  {isLoadingSummary ? <Loader2 size={10} className="animate-spin" /> : <Zap size={10} />}
+                  <span>{showSummary ? 'Hide summary' : 'AI Summary'}</span>
+               </button>
              </div>
 
              <AnimatePresence>
@@ -327,64 +410,37 @@ export default function PostCard({ post: initialPost, onDelete, onUpdate }: Post
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="p-4 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden"
+                    className="mt-3 p-3 rounded-xl bg-white/5 border-l-2 border-primary/50"
                   >
-                    <div className="absolute top-0 left-0 w-1 h-full bg-primary/40" />
-                    <p className="text-[11px] font-bold italic leading-relaxed text-white/60">
-                      {summary}
+                    <p className="text-[11px] font-medium leading-relaxed text-white/70 italic">
+                      "{summary}"
                     </p>
                   </motion.div>
                 )}
              </AnimatePresence>
-          </div>
 
-          {post.hashtags && post.hashtags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-6">
-              {post.hashtags.map(tag => (
-                <span key={tag} className="text-[10px] font-black uppercase text-primary/80 hover:text-primary cursor-pointer transition-colors">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+             {post.hashtags && post.hashtags.length > 0 && (
+               <div className="flex flex-wrap gap-2 pt-1">
+                 {post.hashtags.map(tag => (
+                   <span key={tag} className="text-xs text-blue-400 hover:underline cursor-pointer">
+                     #{tag}
+                   </span>
+                 ))}
+               </div>
+             )}
 
-          {/* Premium Actions Bar */}
-          <div className="flex items-center justify-between pt-2 border-t border-white/5">
-            <div className="flex items-center space-x-6">
-              <motion.button 
-                onClick={handleLike}
-                whileTap={{ scale: 1.4 }}
-                className={`flex items-center space-x-2.5 group/btn ${post.isLiked ? 'text-primary' : 'text-white/40 hover:text-white'}`}
-              >
-                <Heart size={22} fill={post.isLiked ? 'currentColor' : 'none'} className="transition-all duration-300" />
-                <span className="text-sm font-black italic tracking-tighter tabular-nums">{post.likesCount}</span>
-              </motion.button>
-
-              <button 
-                onClick={() => setShowComments(true)}
-                className="flex items-center space-x-2.5 text-white/40 hover:text-white transition-colors group/btn"
-              >
-                <MessageCircle size={22} className="group-hover/btn:scale-110 transition-transform" />
-                <span className="text-xs font-black uppercase tracking-widest opacity-40">Talk</span>
-              </button>
-              
-              <button 
-                onClick={handleShare}
-                className="text-white/40 hover:text-white transition-colors group/btn"
-              >
-                <Share2 size={22} className="group-hover/btn:rotate-12 transition-transform" />
-              </button>
-            </div>
-
-            <button 
-              onClick={handleSave}
-              className={`transition-all ${post.isSaved ? 'text-blue-400' : 'text-white/40 hover:text-white'}`}
-            >
-              <Bookmark size={22} fill={post.isSaved ? 'currentColor' : 'none'} className={post.isSaved ? 'scale-110' : ''} />
-            </button>
+             {post.commentsCount && post.commentsCount > 0 && (
+               <button 
+                 onClick={() => setShowComments(true)}
+                 className="text-sm text-white/40 font-medium block pt-1"
+               >
+                 View all {post.commentsCount} comments
+               </button>
+             )}
           </div>
         </div>
       </motion.div>
+
 
       <AnimatePresence>
         {showComments && (

@@ -41,28 +41,25 @@ export default function StoryBar() {
   };
 
   return (
-    <div className="mb-10 pl-5">
-      <div className="flex items-center space-x-6 overflow-x-auto no-scrollbar py-2">
+    <div className="mb-6 pt-2 h-28 border-b border-white/5">
+      <div className="flex items-center space-x-4 overflow-x-auto no-scrollbar px-4">
         {/* Create Story Button */}
         <motion.div 
-          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="flex flex-col items-center space-y-3 flex-shrink-0"
+          className="flex flex-col items-center space-y-1.5 flex-shrink-0"
         >
           <button 
             onClick={() => setShowCreateStory(true)}
-            className="relative w-20 h-20 rounded-[28px] p-1 bg-white/5 border border-white/10 flex items-center justify-center transition-all bg-[#141414]"
+            className="relative w-16 h-16 rounded-full p-0.5 bg-white/5 flex items-center justify-center transition-all"
           >
-            <div className="w-full h-full rounded-[22px] overflow-hidden relative">
-              <img src={user?.profileImage} alt="" className="w-full h-full object-cover opacity-40 grayscale" />
+            <div className="w-full h-full rounded-full overflow-hidden relative">
+              <img src={user?.profileImage} alt="" className="w-full h-full object-cover grayscale opacity-50" />
             </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-               <div className="bg-primary text-white rounded-xl p-1.5 shadow-2xl shadow-primary/40 border-2 border-[#141414]">
-                 <Plus size={16} strokeWidth={4} />
-               </div>
+            <div className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-0.5 border-2 border-black">
+              <Plus size={14} strokeWidth={4} />
             </div>
           </button>
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">You</span>
+          <span className="text-[11px] font-medium text-white/40">Your story</span>
         </motion.div>
 
         {/* Following Stories */}
@@ -70,22 +67,21 @@ export default function StoryBar() {
           {groupedStories.map((group, idx) => (
             <motion.div 
               key={group.user._id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              whileHover={{ scale: 1.05 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex flex-col items-center space-y-3 flex-shrink-0"
+              className="flex flex-col items-center space-y-1.5 flex-shrink-0"
             >
               <button 
                 onClick={() => setSelectedUserStories(group)}
-                className="relative w-20 h-20 rounded-[28px] p-0.5 story-ring animate-flow transition-all"
+                className="relative w-16 h-16 rounded-full p-0.5 story-ring"
               >
-                <div className="w-full h-full rounded-[26px] border-[3px] border-[#0f0f0f] overflow-hidden bg-[#141414]">
+                <div className="w-full h-full rounded-full border-2 border-black overflow-hidden bg-muted">
                   <img src={group.user.profileImage} alt={group.user.username} className="w-full h-full object-cover" />
                 </div>
               </button>
-              <span className="text-[10px] font-black text-white/60 uppercase tracking-tighter truncate w-20 text-center italic">
+              <span className="text-[11px] font-medium text-white/60 truncate w-16 text-center">
                 {group.user.username}
               </span>
             </motion.div>

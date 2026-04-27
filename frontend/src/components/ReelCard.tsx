@@ -75,90 +75,75 @@ export default function ReelCard({ reel, active }: ReelCardProps) {
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
 
       {/* Content Overlay */}
-      <div className="absolute bottom-24 left-6 right-20 space-y-4">
-        {/* Author Info */}
-        <div className="flex items-center space-x-3 mb-2">
-           <div className={`p-0.5 rounded-2xl ${reel.userId.isPremium ? 'bg-gradient-to-br from-amber-400 to-yellow-600' : 'bg-white/20'}`}>
-              <img src={reel.userId.profileImage} alt="" className="w-10 h-10 rounded-[14px] object-cover" />
-           </div>
-           <div>
-              <div className="flex items-center space-x-2">
-                 <h4 className="font-black italic text-sm tracking-tighter">@{reel.userId.username}</h4>
-                 {reel.userId.isPremium && <Crown size={10} className="text-amber-500 fill-amber-500" />}
-                 <button className="text-[10px] font-black uppercase text-primary border border-primary/40 px-2 py-0.5 rounded-md hover:bg-primary hover:text-white transition-all">Follow</button>
-              </div>
+      <div className="absolute bottom-10 left-4 right-16 z-20">
+        <div className="flex items-center space-x-3 mb-3">
+           <img src={reel.userId.profileImage} alt="" className="w-9 h-9 rounded-full border border-white/20 object-cover" />
+           <div className="flex items-center space-x-2">
+              <h4 className="font-bold text-sm text-white">{reel.userId.username}</h4>
+              <button className="text-[12px] font-bold text-white border border-white/40 px-3 py-1 rounded-lg hover:bg-white/10 transition-all">Follow</button>
            </div>
         </div>
 
-        {/* Caption */}
-        <p className="text-sm font-medium text-white/90 leading-snug line-clamp-2 max-w-[80%]">
+        <p className="text-sm text-white/90 mb-4 line-clamp-2 max-w-[90%]">
           {reel.caption}
         </p>
 
-        {/* Audio Info */}
-        <div className="flex items-center space-x-3 group cursor-pointer">
-           <div className="p-2 bg-white/10 backdrop-blur-3xl rounded-xl border border-white/10 group-hover:bg-white/20 transition-all">
-              <Music size={14} className="text-primary" />
-           </div>
+        <div className="flex items-center space-x-2 max-w-[60%]">
+           <Music size={12} className="text-white" />
            <div className="overflow-hidden whitespace-nowrap">
-              <p className="text-[10px] font-black uppercase tracking-widest animate-marquee inline-block mr-8">
-                 {reel.audioId?.title || 'Original Audio - System Signal Matrix'} • {reel.userId.username}
+              <p className="text-[12px] text-white font-medium animate-marquee">
+                 {reel.audioId?.title || 'Original Audio'} • {reel.userId.username}
               </p>
            </div>
         </div>
       </div>
 
-      {/* Vertical Interaction Bar */}
-      <div className="absolute right-6 bottom-32 flex flex-col items-center space-y-6">
-         {/* Like */}
+      {/* Interaction Bar */}
+      <div className="absolute right-3 bottom-12 z-20 flex flex-col items-center space-y-5">
          <div className="flex flex-col items-center space-y-1">
             <motion.button 
-              whileTap={{ scale: 1.4 }}
+              whileTap={{ scale: 1.3 }}
               onClick={handleLike}
-              className={`p-4 rounded-2xl backdrop-blur-3xl border border-white/10 transition-all ${liked ? 'bg-primary text-white shadow-lg shadow-primary/30 border-primary' : 'bg-white/10 text-white/60 hover:text-white'}`}
+              className={`transition-all ${liked ? 'text-rose-500' : 'text-white'}`}
             >
-               <Heart size={22} fill={liked ? 'currentColor' : 'none'} className={liked ? 'animate-pulse' : ''} />
+               <Heart size={28} fill={liked ? 'currentColor' : 'none'} />
             </motion.button>
-            <span className="text-[10px] font-black tracking-tighter opacity-60 italic">{likesCount}</span>
+            <span className="text-[12px] font-bold text-white drop-shadow-md">{likesCount}</span>
          </div>
 
-         {/* Comments */}
          <div className="flex flex-col items-center space-y-1">
             <button 
               onClick={() => setShowComments(true)}
-              className="p-4 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-2xl text-white/60 hover:text-white transition-all"
+              className="text-white transition-all hover:opacity-70"
             >
-               <MessageCircle size={22} />
+               <MessageCircle size={28} />
             </button>
-            <span className="text-[10px] font-black tracking-tighter opacity-60 italic">{reel.commentsCount || 0}</span>
+            <span className="text-[12px] font-bold text-white drop-shadow-md">{reel.commentsCount || 0}</span>
          </div>
 
-         {/* remix */}
-         <div className="flex flex-col items-center space-y-1">
-            <button 
-              onClick={handleRemix}
-              className="p-4 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-2xl text-white/60 hover:text-white transition-all group"
-            >
-               <Repeat size={22} className="group-hover:rotate-180 transition-transform duration-500" />
-            </button>
-            <span className="text-[10px] font-black tracking-tighter opacity-60 italic">Remix</span>
-         </div>
-
-         {/* Share */}
-         <button className="p-4 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-2xl text-white/60 hover:text-white transition-all">
-            <Share2 size={22} />
+         <button 
+            onClick={handleRemix}
+            className="text-white transition-all hover:opacity-70"
+          >
+             <Repeat size={28} />
          </button>
 
-         {/* Spinning Audio Disc */}
+         <button className="text-white transition-all hover:opacity-70">
+            <Share2 size={28} />
+         </button>
+
+         <button className="text-white transition-all hover:opacity-70">
+            <MoreHorizontal size={28} />
+         </button>
+
          <motion.div 
            animate={{ rotate: 360 }}
            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-           className="relative mt-4"
+           className="w-8 h-8 rounded-lg border-2 border-white/40 p-0.5 mt-2 bg-gradient-to-tr from-neutral-800 to-neutral-600"
          >
-            <div className="w-12 h-12 rounded-full border-2 border-white/20 p-1 bg-black overflow-hidden shadow-2xl">
-               <img src={reel.userId.profileImage} alt="" className="w-full h-full rounded-full object-cover" />
+            <div className="w-full h-full rounded-md overflow-hidden bg-black flex items-center justify-center">
+               <Music size={12} className="text-white opacity-40" />
             </div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-black bg-white/10 backdrop-blur-3xl" />
          </motion.div>
       </div>
 
